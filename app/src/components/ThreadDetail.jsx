@@ -33,7 +33,7 @@ function PostItem({ post }) {
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
         <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-200 text-gray-700">
-          👤 {post.author ?? 'user'}
+          {post.author === 'ai' ? '🤖' : '👤'} {post.author ?? 'user'}
         </span>
 
         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeCfg.color}`}>
@@ -70,7 +70,7 @@ function PostItem({ post }) {
 
 // ─── ReplyForm ────────────────────────────────────────────────────────────────
 
-function ReplyForm({ onReply }) {
+function ReplyForm({ onReply, disabled }) {
   const [message, setMessage] = useState('')
   const [type, setType] = useState('answer')
   const [submitting, setSubmitting] = useState(false)
@@ -78,7 +78,7 @@ function ReplyForm({ onReply }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!message.trim()) return
+    if (!message.trim() || disabled) return
     setSubmitting(true)
     await onReply(type, message)
     setMessage('')
@@ -102,9 +102,10 @@ function ReplyForm({ onReply }) {
         ref={textareaRef}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        placeholder="Write a reply… (supports Markdown)"
+        placeholder={disabled ? 'AI is responding…' : 'Write a reply… (supports Markdown)'}
         rows={3}
-        className="w-full px-4 pt-3 pb-2 text-sm text-gray-800 resize-none outline-none placeholder-gray-400"
+        disabled={disabled || submitting}
+        className="w-full px-4 pt-3 pb-2 text-sm text-gray-800 resize-none outline-none placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
         onKeyDown={(e) => {
           if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit(e)
         }}
@@ -129,10 +130,10 @@ function ReplyForm({ onReply }) {
 
         <button
           type="submit"
-          disabled={!message.trim() || submitting}
+          disabled={!message.trim() || submitting || disabled}
           className="text-xs px-4 py-1.5 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {submitting ? 'Posting…' : 'Reply'}
+          {submitting ? 'Posting…' : disabled ? 'AI thinking…' : 'Reply'}
         </button>
       </div>
     </form>
@@ -141,15 +142,22 @@ function ReplyForm({ onReply }) {
 
 // ─── ThreadDetail ─────────────────────────────────────────────────────────────
 
-export default function ThreadDetail({ thread, onReply, onStatusChange }) {
+export default function ThreadDetail({ thread, fileId, onReply, onTriggerAi, aiStateValue, onDismissAiError, onStatusChange }) {
   const postsEndRef = useRef(null)
   const [showStatusMenu, setShowStatusMenu] = useState(false)
 
   const statusCfg = STATUS_CONFIG[thread.status] ?? STATUS_CONFIG.open
+  const isAiThinking = aiStateValue === 'loading'
+  const aiError = typeof aiStateValue === 'string' ? aiStateValue : null
 
   useEffect(() => {
     postsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [thread.posts?.length])
+  }, [thread.posts?.length, isAiThinking])
+
+  const handleUserReply = async (type, message) => {
+    await onReply(type, message)
+    onTriggerAi(fileId, thread.id)
+  }
 
   return (
     <div className="h-full flex flex-col">
@@ -214,19 +222,36 @@ export default function ThreadDetail({ thread, onReply, onStatusChange }) {
         className="flex-1 overflow-y-auto px-6 py-5 space-y-4"
         onClick={() => showStatusMenu && setShowStatusMenu(false)}
       >
-        {thread.posts?.length === 0 ? (
+        {thread.posts?.length === 0 && !isAiThinking ? (
           <div className="text-center text-gray-400 py-8">
             No posts yet. Start the discussion below.
           </div>
         ) : (
           thread.posts.map((post) => <PostItem key={post.id} post={post} />)
         )}
+        {isAiThinking && (
+          <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 flex items-center gap-3">
+            <span className="inline-block w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm text-purple-700">AI is thinking…</span>
+          </div>
+        )}
+        {aiError && (
+          <div className="rounded-lg border border-red-200 bg-red-50 p-3 flex items-center justify-between">
+            <span className="text-xs text-red-600">AI error: {aiError}</span>
+            <button
+              onClick={() => onDismissAiError(fileId, thread.id)}
+              className="text-xs text-red-400 hover:text-red-600 ml-2 shrink-0"
+            >
+              ✕
+            </button>
+          </div>
+        )}
         <div ref={postsEndRef} />
       </div>
 
       {/* Reply form */}
       <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 shrink-0">
-        <ReplyForm onReply={onReply} />
+        <ReplyForm onReply={handleUserReply} disabled={isAiThinking} />
       </div>
     </div>
   )

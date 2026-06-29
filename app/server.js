@@ -1,13 +1,19 @@
+import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = 3001
 const THREADS_DIR = path.join(__dirname, '..', 'threads')
+
+const genAI = process.env.GEMINI_API_KEY
+  ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+  : null
 
 app.use(cors())
 app.use(express.json({ limit: '10mb' }))
@@ -97,10 +103,12 @@ app.put('/api/threads/:fileId/:threadId/status', (req, res) => {
   res.json({ success: true })
 })
 
-// POST prepare a thread for manual AI review
-// Returns a formatted prompt the user can copy into any AI tool.
-// Does NOT call any AI API — that is handled externally by the user.
-app.post('/api/threads/:fileId/:threadId/review', (req, res) => {
+// POST ask AI for a reply — sends full thread to Gemini, posts AI response
+app.post('/api/threads/:fileId/:threadId/ai-reply', async (req, res) => {
+  if (!genAI) {
+    return res.status(503).json({ error: 'GEMINI_API_KEY not configured. Copy .env.example to .env and set your key.' })
+  }
+
   const { fileId, threadId } = req.params
 
   const data = readFile(fileId)
@@ -118,10 +126,18 @@ app.post('/api/threads/:fileId/:threadId/review', (req, res) => {
     })
     .join(`\n\n${divider}\n\n`)
 
-  const prompt = [
-    'You are reviewing a discussion thread for a Singapore-based expense tracker app',
+  const systemPrompt = [
+    'You are a thoughtful collaborator on a Singapore-based expense tracker app',
     'with a grocery price comparison feature (crowdsourced from user receipts).',
+    'You are participating in a threaded discussion. Reply naturally as if you are',
+    'another team member — be concise, insightful, and directly address the latest posts.',
     '',
+    'If the user asks a question, answer it. If they propose an idea, evaluate it.',
+    'If they raise a concern, address it. Avoid repeating the thread history.',
+    'Keep responses under 3 paragraphs unless the topic demands more depth.',
+  ].join('\n')
+
+  const userContent = [
     `THREAD ID : ${thread.id}`,
     `QUESTION  : ${thread.question}`,
     thread.context ? `CONTEXT   : ${thread.context}` : null,
@@ -134,22 +150,35 @@ app.post('/api/threads/:fileId/:threadId/review', (req, res) => {
     '',
     discussion,
     '',
-    divider,
-    'REVIEW REQUEST',
-    divider,
-    '',
-    'Please provide a focused review that:',
-    '1. Summarises where this discussion currently stands',
-    '2. Identifies any gaps, unresolved risks, or concerns',
-    '3. Asks 1–2 specific follow-up questions if more clarity is needed',
-    '4. Recommends a next action or decision if the thread is ready to close',
-    '',
-    'Be concise and actionable.',
+    'Please reply to this thread.',
   ]
     .filter((line) => line !== null)
     .join('\n')
 
-  res.json({ prompt })
+  try {
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      systemInstruction: systemPrompt,
+    })
+
+    const result = await model.generateContent(userContent)
+    const aiMessage = result.response.text()
+
+    const newPost = {
+      id: `${threadId}-P${thread.posts.length + 1}`,
+      author: 'ai',
+      type: 'answer',
+      message: aiMessage,
+      timestamp: new Date().toISOString(),
+    }
+
+    thread.posts.push(newPost)
+    writeFile(fileId, data)
+    res.json({ success: true, post: newPost })
+  } catch (err) {
+    console.error('Gemini API error:', err)
+    res.status(502).json({ error: err.message || 'AI request failed' })
+  }
 })
 
 // ─── Start ───────────────────────────────────────────────────────────────────

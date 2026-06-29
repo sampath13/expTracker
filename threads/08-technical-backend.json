@@ -7,7 +7,13 @@
       "question": "How will you handle OCR image preprocessing on the .NET backend?",
       "context": "Deskewing, contrast enhancement, noise reduction are needed before OCR for reliable results.",
       "status": "resolved",
-      "tags": ["ocr", "backend", "python", "dotnet", "architecture"],
+      "tags": [
+        "ocr",
+        "backend",
+        "python",
+        "dotnet",
+        "architecture"
+      ],
       "posts": [
         {
           "id": "T20-P1",
@@ -28,7 +34,13 @@
       "question": "Where will receipt images be stored, and for how long?",
       "context": "Images contain sensitive receipt data and should not persist longer than necessary.",
       "status": "needs_discussion",
-      "tags": ["storage", "privacy", "backend", "cloud", "data-retention"],
+      "tags": [
+        "storage",
+        "privacy",
+        "backend",
+        "cloud",
+        "data-retention"
+      ],
       "posts": [
         {
           "id": "T21-P1",
@@ -41,6 +53,13 @@
           "author": "ai",
           "type": "comment",
           "message": "The lifecycle is well thought out. A few implementation questions to resolve before building:\n\n1. CLOUD STORAGE PROVIDER: Which provider for the temp location — AWS S3, Azure Blob Storage, or GCP? This should be in the Singapore region for PDPA data residency alignment. AWS ap-southeast-1 (Singapore) or Azure Southeast Asia are both good choices.\n\n2. TTL ENFORCEMENT: The 2-hour cleanup for crashed sessions — how does it trigger? Options:\n   - Object lifecycle policy on the bucket (S3/Azure Blob support automatic TTL deletion) — simplest, no code needed, reliable\n   - A scheduled backend job (cron / Azure Timer Function) — more control but more to build and maintain\n   - Recommendation: use bucket lifecycle policy for the 2-hour TTL. It is declarative, automatic, and requires no code.\n\n3. SUCCESS PATH CLEANUP: When user confirms OCR output, the .NET backend should immediately call a delete on the temp object — do not rely on TTL for the success path. Explicit immediate deletion is better practice.\n\n4. WHAT STAYS ON PHONE: The user's own expense history (extracted text data, not images) can be cached locally for offline access. Images should never persist on the phone beyond the scan session — delete from local cache as soon as upload completes.\n\n5. COMPARISON DB: Clarify in the architecture diagram — image never flows to the comparison DB. Only the user-confirmed text fields (item name, price, unit, retailer chain, month/year) do."
+        },
+        {
+          "id": "T21-P3",
+          "author": "user",
+          "type": "answer",
+          "message": "1. cloud storage - AWS S3, \n2. object life cycle\n3. yes, backend should clean up\n4. yes\n5. yes",
+          "timestamp": "2026-06-29T21:02:28.576Z"
         }
       ]
     }

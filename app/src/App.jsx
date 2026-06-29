@@ -10,6 +10,7 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [view, setView] = useState('threads') // 'threads' | 'overview'
+  const [aiState, setAiState] = useState(new Map()) // key → 'loading' | error string
 
   const fetchThreads = useCallback(async () => {
     try {
@@ -51,6 +52,39 @@ export default function App() {
     })
     await fetchThreads()
   }
+
+  const triggerAiReply = useCallback(async (fileId, threadId) => {
+    const key = `${fileId}:${threadId}`
+    setAiState((prev) => new Map(prev).set(key, 'loading'))
+
+    try {
+      const res = await fetch(`/api/threads/${fileId}/${threadId}/ai-reply`, {
+        method: 'POST',
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'AI request failed' }))
+        throw new Error(err.error)
+      }
+      try { await fetchThreads() } catch (_) { /* refresh failure is non-fatal */ }
+      setAiState((prev) => {
+        const next = new Map(prev)
+        next.delete(key)
+        return next
+      })
+    } catch (err) {
+      try { await fetchThreads() } catch (_) { /* still try to refresh */ }
+      setAiState((prev) => new Map(prev).set(key, err.message))
+    }
+  }, [fetchThreads])
+
+  const dismissAiError = useCallback((fileId, threadId) => {
+    const key = `${fileId}:${threadId}`
+    setAiState((prev) => {
+      const next = new Map(prev)
+      next.delete(key)
+      return next
+    })
+  }, [])
 
   const handleStatusChange = async (status) => {
     if (!selectedCategoryId || !selectedThreadId) return
@@ -118,7 +152,11 @@ export default function App() {
         ) : selectedThread ? (
           <ThreadDetail
             thread={selectedThread}
+            fileId={selectedCategoryId}
             onReply={handleReply}
+            onTriggerAi={triggerAiReply}
+            aiStateValue={aiState.get(`${selectedCategoryId}:${selectedThreadId}`)}
+            onDismissAiError={dismissAiError}
             onStatusChange={handleStatusChange}
           />
         ) : (

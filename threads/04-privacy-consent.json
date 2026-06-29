@@ -7,7 +7,12 @@
       "question": "What exactly counts as 'masked PII' in your model?",
       "context": "Receipts contain: name, partial card number, store address, items purchased, date/time.",
       "status": "needs_discussion",
-      "tags": ["privacy", "pii", "data-architecture", "pdpa"],
+      "tags": [
+        "privacy",
+        "pii",
+        "data-architecture",
+        "pdpa"
+      ],
       "posts": [
         {
           "id": "T08-P1",
@@ -28,7 +33,12 @@
       "question": "Is the retailer comparison a user benefit or a monetisation strategy — or both?",
       "context": "This framing shapes how you structure consent and what users expect long-term.",
       "status": "needs_discussion",
-      "tags": ["monetisation", "strategy", "ux", "freemium"],
+      "tags": [
+        "monetisation",
+        "strategy",
+        "ux",
+        "freemium"
+      ],
       "posts": [
         {
           "id": "T09-P1",
@@ -41,6 +51,13 @@
           "author": "ai",
           "type": "comment",
           "message": "You're right that converting a free feature to paid is painful — it triggers backlash and churns early adopters who built their workflow around it. But there's a clean solution: freemium gating from day one, not a post-launch switch.\n\nDAY 1 STRUCTURE (suggested):\n- Free tier: basic comparison (which store is cheaper for this item, today) — limited to N comparisons/month, say 10\n- Premium tier: unlimited comparisons + historical price trends + full basket optimisation + export reports\n\nThis means:\n- Comparison is never 'fully free' so there's no regression perception\n- Users get enough value on free tier to see why premium is worth it\n- You don't have to enforce the gate strictly early on (be generous) — the gate just needs to exist structurally\n\nThe alternative framing: basic comparison = free forever (sustains growth). Advanced insights = premium. This way you never take anything away — you just sell depth, not access.\n\nWhich gate model appeals more to you — access limits or depth limits?"
+        },
+        {
+          "id": "T09-P3",
+          "author": "user",
+          "type": "answer",
+          "message": "I like the idea, let me if there are any other ways to monetize this app?",
+          "timestamp": "2026-06-29T21:12:58.937Z"
         }
       ]
     },
@@ -49,7 +66,13 @@
       "question": "How will you handle GDPR / CCPA for targeted advertising based on purchase behaviour?",
       "context": "Both GDPR and CCPA have strict rules around using behavioural/financial data for marketing.",
       "status": "needs_discussion",
-      "tags": ["privacy", "regulation", "advertising", "pdpa", "singapore"],
+      "tags": [
+        "privacy",
+        "regulation",
+        "advertising",
+        "pdpa",
+        "singapore"
+      ],
       "posts": [
         {
           "id": "T10-P1",
@@ -70,7 +93,12 @@
       "question": "Will users explicitly opt in to data sharing for retailer benchmarking and offers?",
       "context": "Opt-in vs opt-out has significant implications under data protection law and user trust.",
       "status": "needs_discussion",
-      "tags": ["privacy", "consent", "pdpa", "ux"],
+      "tags": [
+        "privacy",
+        "consent",
+        "pdpa",
+        "ux"
+      ],
       "posts": [
         {
           "id": "T11-P1",

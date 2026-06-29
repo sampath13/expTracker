@@ -31,6 +31,20 @@
           "type": "comment",
           "message": "Agree!",
           "timestamp": "2026-06-29T09:32:18.008Z"
+        },
+        {
+          "id": "T01-P4",
+          "author": "user",
+          "type": "comment",
+          "message": "do you have any other suggestions?",
+          "timestamp": "2026-06-29T21:18:00.754Z"
+        },
+        {
+          "id": "T01-P5",
+          "author": "ai",
+          "type": "answer",
+          "message": "Great question! Building on our grocery focus and the unique Indian provision shop angle, here are a few other suggestions to consider for our MVP strategy:\n\n1.  **Frictionless Receipt Submission:** For crowdsourcing to work, especially with non-digitized shops, making receipt capture incredibly easy is paramount. Think about features like multi-photo stitching for long receipts, good OCR accuracy, and a simple way for users to correct any misreads quickly.\n2.  **Robust Product Matching & Standardization:** To provide accurate comparisons, we'll need a smart way to match similar products across different receipts and retailers, even if they have slightly different names (e.g., \"Basmati Rice 1kg\" vs. \"Long Grain Rice (Basmati) 1KG\"). Investing in a strong backend for product categorization and AI-assisted matching will be crucial.\n3.  **Incentivizing Early Contributions:** To jumpstart data collection, particularly from the harder-to-get Indian provision shops, consider an early incentive program. This could be in the form of in-app points, badges, small cashback rewards for the first X receipts, or even leaderboards to gamify contributions. This is key to building out the unique data set we're aiming for.",
+          "timestamp": "2026-06-29T21:18:09.187Z"
         }
       ]
     },
