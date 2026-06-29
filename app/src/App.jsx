@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Sidebar from './components/Sidebar'
 import ThreadDetail from './components/ThreadDetail'
+import ProductOverview from './components/ProductOverview'
 
 export default function App() {
   const [categories, setCategories] = useState([])
@@ -8,6 +9,7 @@ export default function App() {
   const [selectedThreadId, setSelectedThreadId] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [view, setView] = useState('threads') // 'threads' | 'overview'
 
   const fetchThreads = useCallback(async () => {
     try {
@@ -106,10 +108,14 @@ export default function App() {
         onSelectThread={handleSelectThread}
         totalThreads={totalThreads}
         needsAction={needsAction}
+        view={view}
+        onViewChange={setView}
       />
 
       <main className="flex-1 overflow-hidden">
-        {selectedThread ? (
+        {view === 'overview' ? (
+          <ProductOverview />
+        ) : selectedThread ? (
           <ThreadDetail
             thread={selectedThread}
             onReply={handleReply}

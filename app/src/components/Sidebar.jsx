@@ -20,16 +20,36 @@ export default function Sidebar({
   onSelectThread,
   totalThreads,
   needsAction,
+  view,
+  onViewChange,
 }) {
   return (
     <aside className="w-72 h-full flex flex-col border-r border-gray-200 bg-white shrink-0">
       {/* Header */}
       <div className="px-4 py-4 border-b border-gray-100">
-        <h1 className="font-semibold text-gray-900 text-base">Research Threads</h1>
+        <h1 className="font-semibold text-gray-900 text-base">ExpTracker</h1>
         <p className="text-xs text-gray-400 mt-0.5">
           {totalThreads} threads · {needsAction} need action
         </p>
       </div>
+
+      {/* Product Overview link */}
+      <div className="px-3 pt-3 pb-1">
+        <button
+          onClick={() => onViewChange('overview')}
+          className={`w-full text-left px-3 py-2 rounded-md text-xs font-medium flex items-center gap-2 transition-colors ${
+            view === 'overview'
+              ? 'bg-blue-50 text-blue-700 border border-blue-200'
+              : 'text-gray-600 hover:bg-gray-50'
+          }`}
+        >
+          <span>📄</span>
+          Product Overview
+        </button>
+      </div>
+
+      {/* Divider */}
+      <div className="mx-4 mt-2 mb-0 border-t border-gray-100" />
 
       {/* Thread list grouped by category */}
       <nav className="flex-1 overflow-y-auto py-2">
@@ -57,9 +77,9 @@ export default function Sidebar({
                 return (
                   <button
                     key={thread.id}
-                    onClick={() => onSelectThread(cat.fileId, thread.id)}
+                    onClick={() => { onSelectThread(cat.fileId, thread.id); onViewChange('threads') }}
                     className={`w-full text-left px-4 py-2.5 flex items-start gap-2.5 hover:bg-gray-50 transition-colors ${
-                      isSelected ? 'bg-blue-50 border-r-2 border-blue-500' : ''
+                      isSelected && view === 'threads' ? 'bg-blue-50 border-r-2 border-blue-500' : ''
                     }`}
                   >
                     {/* Status dot */}

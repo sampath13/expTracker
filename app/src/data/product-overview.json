@@ -1,0 +1,142 @@
+{
+  "title": "ExpTracker",
+  "tagline": "Scan your grocery receipts. See where you could spend less.",
+  "status": { "label": "Pre-development", "description": "Architecture and research complete. Implementation not yet started." },
+
+  "sections": [
+    {
+      "id": "what",
+      "heading": "What is this?",
+      "type": "prose",
+      "body": "ExpTracker is a mobile app for Singapore residents to scan grocery receipts, track personal spending, and instantly see whether the items they bought are available for less at a different supermarket chain.\n\nIt is not a generic expense tracker or a budgeting app. It is built around one specific insight: the same grocery item can differ by 20–40% in price across Singapore chains, and most people have no easy way to know this at the time they shop."
+    },
+    {
+      "id": "problem",
+      "heading": "The Problem",
+      "type": "card-list",
+      "items": [
+        {
+          "number": "1",
+          "title": "Price opacity at the point of purchase",
+          "body": "Singapore has no mandatory retail price registry and no MRP law. NTUC FairPrice, Sheng Siong, Cold Storage, Giant, Don Don Donki, and Indian provision shops all stock many of the same items — at different prices — with no single place to compare them."
+        },
+        {
+          "number": "2",
+          "title": "Post-purchase regret with no actionable output",
+          "body": "People occasionally notice a price difference after the fact, but there is no lightweight way to record the observation, aggregate it with others, and turn it into a changed shopping habit."
+        },
+        {
+          "number": "3",
+          "title": "Manual expense tracking is abandoned quickly",
+          "body": "Existing trackers require manual data entry. People start, forget, and stop. The app must earn its keep at the moment of least friction: right after checkout, receipt in hand."
+        }
+      ]
+    },
+    {
+      "id": "solution",
+      "heading": "The Solution",
+      "type": "flow",
+      "intro": "One flow solves all three problems:",
+      "steps": [
+        { "label": "Scan", "description": "Point your camera at any grocery receipt. OCR extracts every line item automatically." },
+        { "label": "Confirm", "description": "Review the extracted items, correct any errors, then save. Your personal expense history is stored privately, linked only to your account." },
+        { "label": "Compare", "description": "The app checks confirmed item prices against the crowdsourced pool and surfaces differences across chains. No judgemental framing — only \"available for less at X.\"" },
+        { "label": "Contribute", "description": "Your confirmed prices — stripped of all personal identifiers — are added to the shared pool, making comparison more accurate for everyone." }
+      ]
+    },
+    {
+      "id": "users",
+      "heading": "Who is this for?",
+      "type": "user-target",
+      "primary": {
+        "label": "Primary user",
+        "description": "Singapore resident who does weekly or fortnightly grocery shopping, shops at 1–2 chains regularly, and wants to stretch their grocery budget without spending time on manual research."
+      },
+      "excluded": {
+        "label": "Out of scope",
+        "items": ["Business expense tracking", "Travel expenses", "Non-grocery categories (phase 1)", "Users outside Singapore"]
+      }
+    },
+    {
+      "id": "features",
+      "heading": "Key Features — MVP",
+      "type": "table",
+      "columns": ["Feature", "Description"],
+      "rows": [
+        ["Receipt scanning", "Camera capture + OCR (PaddleOCR), English and Chinese receipts"],
+        ["OCR review screen", "User confirms or edits extracted items before saving"],
+        ["Personal expense history", "Privately stored bill and item history by date and retailer"],
+        ["Price comparison", "Chain-level comparison for confirmed items against the shared pool"],
+        ["Crowdsourced pool", "Anonymised price data contributed by all users, no personal linkage"],
+        ["Singapore-first", "Covers NTUC FairPrice, Sheng Siong, Cold Storage, Giant, Don Don Donki, Indian provision shops"]
+      ]
+    },
+    {
+      "id": "differentiation",
+      "heading": "What Makes It Different",
+      "type": "table",
+      "columns": ["Competitor", "What they do", "What they miss"],
+      "rows": [
+        ["Expensify / Shoeboxed", "Receipt scanning for business expenses", "No grocery focus, no price comparison"],
+        ["Mint / YNAB", "Budget tracking", "Manual entry, no OCR, no comparison"],
+        ["Smart Receipts", "Personal receipt storage", "No comparison, not Singapore-specific"],
+        ["PriceWatch-style sites", "Manual price comparison", "Not linked to your actual purchases"]
+      ],
+      "callout": "No product combines post-purchase receipt scanning with crowdsourced, purchase-linked price comparison for Singapore grocery chains. That is the gap ExpTracker fills."
+    },
+    {
+      "id": "privacy",
+      "heading": "Privacy Principles",
+      "type": "bullet-list",
+      "items": [
+        { "strong": "Personal bills", "rest": "are stored privately, linked to your account. You control them." },
+        { "strong": "Comparison pool", "rest": "contains only: item name, price, unit, retailer chain, month/year. No user ID, no bill ID, no full date. Outside PDPA personal data scope by design." },
+        { "strong": "Receipt images", "rest": "are deleted immediately after OCR is confirmed. Never stored permanently." },
+        { "strong": "No selling of data.", "rest": "The comparison pool is a shared utility, not a monetisation asset." }
+      ]
+    },
+    {
+      "id": "revenue",
+      "heading": "Revenue Model",
+      "type": "pricing",
+      "note": "Freemium from day 1 — not free now, paid later. Avoids feature regression perception.",
+      "tiers": [
+        {
+          "name": "Free",
+          "price": "SGD 0",
+          "features": [
+            "Up to 10 bill scans per month",
+            "Basic expense list",
+            "Price comparison (limited queries)"
+          ]
+        },
+        {
+          "name": "Premium",
+          "price": "Paid",
+          "highlight": true,
+          "features": [
+            "Unlimited scans",
+            "Full expense history",
+            "Unlimited comparison queries",
+            "Spending trends",
+            "Data export"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stack",
+      "heading": "Tech Stack",
+      "type": "table",
+      "columns": ["Layer", "Technology"],
+      "rows": [
+        ["Mobile", "React Native (bare), react-native-vision-camera"],
+        ["Backend API", ".NET 8, ASP.NET Core, PostgreSQL"],
+        ["OCR service", "Python, FastAPI, OpenCV, PaddleOCR"],
+        ["Fuzzy matching", "RapidFuzz (Python), three-tier confidence"],
+        ["Temp image storage", "AWS S3 ap-southeast-1, 2-hr TTL lifecycle policy"],
+        ["Data residency", "Singapore region (PDPA alignment)"]
+      ]
+    }
+  ]
+}
