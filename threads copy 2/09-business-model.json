@@ -1,0 +1,48 @@
+{
+  "category": "Business Model",
+  "description": "Revenue strategy at launch, freemium structure, and long-term monetisation path.",
+  "threads": [
+    {
+      "id": "T22",
+      "question": "What is the primary revenue model at launch?",
+      "context": "Freemium, subscription, retailer advertising, B2B data licensing.",
+      "status": "resolved",
+      "tags": ["business-model", "revenue", "freemium"],
+      "posts": [
+        {
+          "id": "T22-P1",
+          "author": "user",
+          "type": "answer",
+          "message": "At launch is Freemium."
+        },
+        {
+          "id": "T22-P2",
+          "author": "ai",
+          "type": "comment",
+          "message": "Freemium is the right launch model. Cross-reference with T09 on gating strategy — the key decision is whether the free tier is access-limited (N comparisons/month) or depth-limited (basic comparison free, advanced insights paid). That decision should be made before building the comparison feature so the gate is baked in from day one, not retrofitted. Revisit this thread once T09 is resolved."
+        }
+      ]
+    },
+    {
+      "id": "T23",
+      "question": "At what user scale does the advertising model become viable?",
+      "context": "Advertising to a small user base is both low-revenue and potentially damaging to trust.",
+      "status": "deferred",
+      "tags": ["business-model", "advertising", "scale", "deferred"],
+      "posts": [
+        {
+          "id": "T23-P1",
+          "author": "user",
+          "type": "answer",
+          "message": "No decision at the moment."
+        },
+        {
+          "id": "T23-P2",
+          "author": "ai",
+          "type": "comment",
+          "message": "Deferred is fine — this is a phase-2 decision. When you do revisit it, the two models to evaluate are:\n\n1. RETAILER-SPONSORED PLACEMENT: Retailers pay to surface deals/offers to users who buy relevant products (e.g. NTUC FairPrice promotes a deal on users who regularly buy cooking oil). Requires retailer relationships and a consent framework (see T10/T11).\n\n2. AGGREGATED INSIGHTS LICENSING: Sell anonymised trend reports to FMCG brands or market research firms ('Brand X's price sensitivity across Singapore grocery chains over Q1'). No user targeting — just aggregate analytics. Higher margin, lower trust risk, but requires substantial data volume.\n\nA rough threshold for advertising viability: 5,000-10,000 monthly active Singapore users with consistent scan behaviour. Below that, the data is too thin for meaningful targeting or licensing."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "category": "Retailer Relationship",
+  "description": "How the app positions itself relative to retailers — passive benchmarking, partnerships, and communication framing.",
+  "threads": [
+    {
+      "id": "T12",
+      "question": "Do retailers know they are being benchmarked?",
+      "context": "Operating without retailer knowledge raises potential legal and reputational questions.",
+      "status": "needs_discussion",
+      "tags": ["legal", "retailers", "transparency", "singapore"],
+      "posts": [
+        {
+          "id": "T12-P1",
+          "author": "user",
+          "type": "answer",
+          "message": "No, not in MVP. Will this have any legal implications?"
+        },
+        {
+          "id": "T12-P2",
+          "author": "ai",
+          "type": "research",
+          "message": "In Singapore, benchmarking retailers using data voluntarily submitted by your own users (their receipts) is legally sound. Here's why:\n\n1. The data source is users, not retailer systems. You are not scraping retailer websites, accessing their databases, or breaching any system. Users own their receipts.\n\n2. Price transparency is explicitly encouraged by Singapore's regulatory environment. The Competition and Consumer Commission of Singapore (CCCS) promotes market transparency as pro-consumer. Your app aligns with this stance.\n\n3. No defamation risk if you are factual. Stating 'NTUC FairPrice charged $3.50 for Brand X on [date], Sheng Siong charged $2.90' is a statement of fact sourced from user receipts — not an opinion or editorial judgment. Do NOT use words like 'overpriced', 'ripping off', or 'avoid' — those could be construed as defamatory editorial.\n\n4. No IP issues. Retail prices are not copyrighted. Price data is factual information, not creative content.\n\nThe main risk is reputational, not legal: a large retailer (e.g. NTUC FairPrice) might publicly object to the app if it gains traction. This is actually free press. Handle it by having your framing watertight (see T14) and your data methodology transparent.\n\nBottom line: no legal barrier to passive benchmarking in MVP."
+        }
+      ]
+    },
+    {
+      "id": "T13",
+      "question": "Will you pursue retailer partnerships (like Ibotta/Fetch Rewards) or operate passively?",
+      "context": "Partnerships can provide seed data and revenue but change the app's independence.",
+      "status": "resolved",
+      "tags": ["partnerships", "strategy", "mvp"],
+      "posts": [
+        {
+          "id": "T13-P1",
+          "author": "user",
+          "type": "answer",
+          "message": "MVP - operate passively. Later maybe partnership."
+        },
+        {
+          "id": "T13-P2",
+          "author": "ai",
+          "type": "comment",
+          "message": "Correct sequencing. Build the user base and data credibility first while independent — that actually gives you stronger leverage when approaching retailers later. A retailer will pay more attention to an app with 10,000 active Singapore users and real purchase data than a startup with no users asking for a data partnership. Independence in MVP also means your comparison results are unbiased, which is a trust asset."
+        }
+      ]
+    },
+    {
+      "id": "T14",
+      "question": "If a retailer objects to being benchmarked as 'expensive', how do you handle that?",
+      "context": "Framing and language choices determine whether retailers see the app as fair or adversarial.",
+      "status": "resolved",
+      "tags": ["ux", "framing", "legal", "communication"],
+      "posts": [
+        {
+          "id": "T14-P1",
+          "author": "user",
+          "type": "answer",
+          "message": "We do not put label as expensive, we only show that this item can be bought for lesser price at another retailer (retailer name). NOT TO BE offensive to any retailer but be informative to user. Same message but different communication."
+        },
+        {
+          "id": "T14-P2",
+          "author": "ai",
+          "type": "comment",
+          "message": "This is exactly the right instinct and should be codified as a design principle for the whole team. Suggested language rules:\n\nNEVER USE: expensive, overpriced, ripoff, avoid, bad value, worst\nALWAYS USE: available for less at X, lower price found at X, price difference: $Y, based on [N] receipts in the last [period]\n\nAlso add data transparency to every comparison — show how many receipts the comparison is based on and when the last data point was. 'Based on 12 receipts, last reported 5 days ago' builds trust and contextualises the comparison. A retailer cannot reasonably object to factual, sourced, neutrally-framed price data.\n\nThis framing policy should live in a product design doc, not just in conversations — make sure every developer and designer working on the comparison UI knows it."
+        }
+      ]
+    }
+  ]
+}

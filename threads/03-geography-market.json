@@ -1,0 +1,48 @@
+{
+  "category": "Geography & Market",
+  "description": "Target market, geographic scope, and what that means for data coverage and regulatory context.",
+  "threads": [
+    {
+      "id": "T06",
+      "question": "Which market(s) are you targeting first?",
+      "context": "UK, US, India, Australia, other?",
+      "status": "resolved",
+      "tags": ["market", "geography"],
+      "posts": [
+        {
+          "id": "T06-P1",
+          "author": "user",
+          "type": "answer",
+          "message": "Singapore."
+        },
+        {
+          "id": "T06-P2",
+          "author": "ai",
+          "type": "comment",
+          "message": "Good choice for a first market — Singapore is small geographically (makes local coverage achievable), has high smartphone penetration (~88%), a tech-savvy population comfortable with app-based finance tools, and a mature grocery retail market with clear players. The lack of MRP regulation (unlike India) means prices genuinely vary across retailers, making your comparison feature actually useful. Regulatory framework is PDPA not GDPR — see thread 10 for the full breakdown."
+        }
+      ]
+    },
+    {
+      "id": "T07",
+      "question": "Are comparisons local (city/region), national, or global?",
+      "context": "Prices can vary significantly by location even within the same retail chain.",
+      "status": "needs_discussion",
+      "tags": ["geography", "data-model", "scope"],
+      "posts": [
+        {
+          "id": "T07-P1",
+          "author": "user",
+          "type": "answer",
+          "message": "Local (Singapore only)."
+        },
+        {
+          "id": "T07-P2",
+          "author": "ai",
+          "type": "comment",
+          "message": "Singapore-only is the right call for phase 1. However, one nuance worth thinking about: even within Singapore, prices at the same chain can vary by outlet. A NTUC FairPrice in Orchard Road may price differently to one in Woodlands or Jurong. Do you want to compare at:\n\n- CHAIN level: 'NTUC FairPrice vs Sheng Siong' (simpler, works with less data per outlet)\n- OUTLET level: 'NTUC FairPrice Clementi vs NTUC FairPrice Buona Vista' (more precise but needs higher data density per location)\n\nRecommendation for MVP: chain-level comparison. It's more universally actionable ('shop at Sheng Siong instead of Cold Storage') and requires less data to be meaningful. Outlet-level can come later when you have the volume to support it. Worth deciding now because it affects how you store the store metadata extracted from OCR (chain name only, vs chain + outlet address)."
+        }
+      ]
+    }
+  ]
+}

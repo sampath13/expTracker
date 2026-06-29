@@ -1,0 +1,48 @@
+{
+  "category": "Technical — Mobile",
+  "description": "Mobile framework choices, camera integration, and platform-specific concerns for the React Native app.",
+  "threads": [
+    {
+      "id": "T18",
+      "question": "React Native with Expo, or bare React Native?",
+      "context": "Expo offers faster setup; bare React Native gives more control over native modules.",
+      "status": "resolved",
+      "tags": ["react-native", "mobile", "architecture"],
+      "posts": [
+        {
+          "id": "T18-P1",
+          "author": "user",
+          "type": "answer",
+          "message": "Bare native."
+        },
+        {
+          "id": "T18-P2",
+          "author": "ai",
+          "type": "comment",
+          "message": "Bare React Native is the right call for this app given camera + image processing requirements. Key library to use for camera: react-native-vision-camera (v3+). Do NOT use the older react-native-camera — it is deprecated and unmaintained.\n\nreact-native-vision-camera gives you:\n- High-res photo capture with format control\n- Frame processors (can run on-device ML if needed later)\n- Active maintenance and good community support\n- Works with both Android and iOS\n\nAlso needed: react-native-fs or @react-native-community/cameraroll for temporary local file management (storing the photo before upload). Plan this from the start rather than retrofitting it later."
+        }
+      ]
+    },
+    {
+      "id": "T19",
+      "question": "How will you handle camera permission and image quality differences across iOS and Android?",
+      "context": "Android has changed storage permission model multiple times (Android 10, 11, 13). iOS requires explicit camera permission descriptions in Info.plist.",
+      "status": "needs_discussion",
+      "tags": ["react-native", "permissions", "android", "ios", "mobile"],
+      "posts": [
+        {
+          "id": "T19-P1",
+          "author": "user",
+          "type": "answer",
+          "message": "Let's first work on Dev version of Android and then can think of permissions. Is there something we need to clarify first?"
+        },
+        {
+          "id": "T19-P2",
+          "author": "ai",
+          "type": "concern",
+          "message": "Camera + storage permissions are not an afterthought — they are foundational to the app's core flow and changing the permission pattern later causes significant refactoring. It's cheap to do this right from the start. Here's what you need to clarify now:\n\nANDROID:\n- CAMERA permission: required for receipt scanning — declared in AndroidManifest.xml, requested at runtime\n- Storage has changed significantly:\n  - Android 9 and below: READ_EXTERNAL_STORAGE / WRITE_EXTERNAL_STORAGE\n  - Android 10-12: scoped storage (app-specific directories don't need permission)\n  - Android 13+: READ_MEDIA_IMAGES replaces READ_EXTERNAL_STORAGE\n- Since you are storing photos temporarily in the app's own cache directory (not the gallery), you likely need NO storage permission at all on modern Android — the app-private cache is accessible without it. This is actually good news and simplifies your flow.\n\niOS (for when you extend later):\n- NSCameraUsageDescription in Info.plist is mandatory — App Store will reject without it\n- NSPhotoLibraryUsageDescription if you allow picking from gallery\n\nRECOMMENDATION: use react-native-permissions library from the start to handle permission requests consistently across OS versions. Establish the permission check → request → handle denial flow on day 1 of development. It is a one-time setup that saves you from multiple rework cycles."
+        }
+      ]
+    }
+  ]
+}
