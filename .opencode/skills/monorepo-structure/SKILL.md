@@ -119,11 +119,23 @@ expTracker/
 │   └── s3ninja/
 │       └── (s3ninja config)
 │
-├── docs/                          # Project documentation (root docs + architecture)
+├── docs/                          # Project documentation + decision records
 │   ├── architecture.md
 │   ├── product-overview.md
 │   ├── epics.md
-│   └── open-questions.md
+│   ├── open-questions.md
+│   └── decisions/                 # Decision records (JSON, consumed by threader app)
+│       ├── 01-product-scope.json
+│       ├── 02-cold-start.json
+│       ├── 03-geography-market.json
+│       ├── 04-privacy-consent.json
+│       ├── 05-retailer-relationship.json
+│       ├── 06-ocr-accuracy.json
+│       ├── 07-technical-mobile.json
+│       ├── 08-technical-backend.json
+│       ├── 09-business-model.json
+│       ├── 10-regulatory.json
+│       └── 11-architecture.json
 │
 ├── stories/                       # Story breakdowns per epic (consumed by agents)
 │   ├── epic-0-scaffold/
@@ -135,19 +147,6 @@ expTracker/
 │   ├── epic-6-pool/
 │   ├── epic-7-freemium/
 │   └── epic-8-polish/
-│
-├── threads/                       # Decision records (JSON, consumed by threader app)
-│   ├── 01-product-scope.json
-│   ├── 02-cold-start.json
-│   ├── 03-geography-market.json
-│   ├── 04-privacy-consent.json
-│   ├── 05-retailer-relationship.json
-│   ├── 06-ocr-accuracy.json
-│   ├── 07-technical-mobile.json
-│   ├── 08-technical-backend.json
-│   ├── 09-business-model.json
-│   ├── 10-regulatory.json
-│   └── 11-architecture.json
 │
 ├── scripts/                       # Root-level utility scripts
 │   └── seed/
@@ -177,10 +176,10 @@ expTracker/
 | Decision | Why |
 |---|---|
 | `apps/` for deployables | Turborepo/Nx convention. Each subdirectory is a self-contained unit with its own build, test, and deploy lifecycle. Clear distinction from shared code. |
-| `apps/threader/` lives alongside production apps | The threader is a research/visibility tool that consumes `threads/`. It belongs in the monorepo as a first-class application, not hidden in a `tools/` ghetto. |
-| `docs/` for architectural docs | Keeps root clean. Documentation is versioned alongside code. |
+| `apps/threader/` lives alongside production apps | The threader is a research/visibility tool that consumes `docs/decisions/`. It belongs in the monorepo as a first-class application, not hidden in a `tools/` ghetto. |
+| `docs/` for architectural docs + decisions | Keeps root clean. Documentation and decision records are versioned alongside code. |
 | `stories/` at root (not under `docs/`) | Stories are work-in-progress execution plans consumed by AI coding agents. They evolve rapidly and are referenced directly in implementation workflows. |
-| `threads/` at root | Threader's Express server serves `threads/` from the repo root. Moving would break the viewer. Content is stable decision records, not docs. |
+| `docs/decisions/` under docs | Decision records are a complement to architectural docs. Grouping them under `docs/` keeps them findable while letting `docs/` be the single source of truth for project knowledge. |
 | `docker/` at root | Single source of truth for container config. Avoids duplication across services. |
 | `scripts/` at root | Cross-cutting utility scripts (seed data loader) that span multiple services. |
 | No `packages/` yet | No shared libraries currently exist. Add `packages/` when a shared package emerges (e.g., `shared-types`, `eslint-config`, shared Python utilities). |
@@ -195,7 +194,7 @@ expTracker/
 | `product-overview.md` | `docs/product-overview.md` |
 | `open-questions.md` | `docs/open-questions.md` |
 | `stories/` | `stories/` (path unchanged) |
-| `threads/` | `threads/` (path unchanged) |
+| `threads/` | `docs/decisions/` |
 | `threader/` | `apps/threader/` |
 | *(new)* | `apps/mobile/` (scaffold React Native) |
 | *(new)* | `apps/api/` (scaffold .NET 10) |
@@ -209,9 +208,9 @@ expTracker/
 1. Create directories: `apps/`, `docker/`, `docs/`, `scripts/`
 2. Move docs: `architecture.md`, `epics.md`, `product-overview.md`, `open-questions.md` → `docs/`
 3. Move threader: `threader/` → `apps/threader/`
-   - **Critical:** Update `apps/threader/server.js:11` from `path.join(__dirname, '..', 'threads')` to `path.join(__dirname, '..', '..', 'threads')` so the Express server can still find `threads/` from its new nested location.
+   - **Critical:** Update `apps/threader/server.js:11` from `path.join(__dirname, '..', 'threads')` to `path.join(__dirname, '..', '..', 'docs', 'decisions')` so the Express server can still find `docs/decisions/` from its new nested location.
    - Verify `npm run dev` still works from `apps/threader/`
-4. `stories/` and `threads/` — keep at current location (paths unchanged)
+4. `stories/` — keep at current location. `threads/` → `docs/decisions/`
 5. Scaffold empty apps — create `apps/mobile/`, `apps/api/`, `apps/ocr-service/` with base project configs per Epic 0
 6. Create `docker/` — move Docker Compose + configs here
 7. Create `scripts/seed/` — seed data and loader script
@@ -225,7 +224,7 @@ expTracker/
 - **New shared Python library** → `packages/<name>/` with its own `pyproject.toml` or `setup.py`
 - **New documentation** → `docs/<name>.md`
 - **New story breakdown** → `stories/epic-<N>-<name>/`
-- **New decision record** → `threads/<NN>-<topic>.json` (two-digit prefix, kebab-case)
+- **New decision record** → `docs/decisions/<NN>-<topic>.json` (two-digit prefix, kebab-case)
 - **New cross-cutting script** → `scripts/<name>/`
 - **Infrastructure/docker changes** → `docker/`
 - **CI changes** → `.github/workflows/`

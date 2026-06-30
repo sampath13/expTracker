@@ -172,5 +172,5 @@ Gating is structural from day 1 — no "free now, paid later" transition.
 | `docs/product-overview.md` | Product concept, problem/solution, competitors, revenue model |
 | `docs/epics.md` | Epics 0-8 with story breakdowns, dependencies, acceptance criteria |
 | `docs/open-questions.md` | Historical Q&A on scope, privacy, technical, business decisions |
-| `threads/*.json` | Individual decision records with AI+user discussion threads |
+| `docs/decisions/*.json` | Individual decision records with AI+user discussion threads |
 | `stories/epic-*/` | Detailed story files per epic |

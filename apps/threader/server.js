@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = 3001
-const THREADS_DIR = path.join(__dirname, '..', 'threads')
+const THREADS_DIR = path.join(__dirname, '..', '..', 'docs', 'decisions')
 
 const GO_API_KEY = process.env.OPENCODE_GO_API_KEY
 const GO_MODEL = process.env.OPENCODE_GO_MODEL || 'deepseek-v4-flash'

@@ -119,5 +119,5 @@ Full architecture detail: see `architecture.md`.
 
 - Product scope, regulatory landscape (PDPA, CCCS), and competitive analysis: done
 - System architecture design: done (see `architecture.md`)
-- Open technical decisions (auth, cloud provider, state management): tracked in `threads/11-architecture.json`
+- Open technical decisions (auth, cloud provider, state management): tracked in `docs/decisions/11-architecture.json`
 - Implementation: not started

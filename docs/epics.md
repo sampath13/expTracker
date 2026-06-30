@@ -1,7 +1,7 @@
 # ExpTracker — Epics & Work Breakdown
 
 > All architectural decisions resolved. See `docs/architecture.md` for system design.
-> Decision threads referenced throughout; see `threads/` for full discussion.
+> Decision threads referenced throughout; see `docs/decisions/` for full discussion.
 > Monorepo layout: see `.monorepo-structure.md`.
 
 ---
@@ -24,7 +24,7 @@
 | Move existing docs to `docs/` | Creating new files |
 | Move `threader/` to `apps/threader/` | Changing threader functionality |
 | Fix threader path after move | Docker Compose (Epic 0 / S0.9) |
-| `stories/` and `threads/` stay at root | — |
+| `stories/` stays at root and `threads/` → `docs/decisions/` | — |
 
 ### Story Breakdown
 
@@ -32,7 +32,7 @@
 - Create target directories: `apps/`, `docs/`, `docker/`, `scripts/`, `.github/workflows/`
 - Move `architecture.md`, `epics.md`, `product-overview.md`, `open-questions.md` → `docs/`
 - Move `threader/` → `apps/threader/`, fix `server.js:11` threads path
-- Keep `stories/` and `threads/` at root
+- Keep `stories/` at root and move `threads/` → `docs/decisions/`
 - Verify threader still works, no broken paths
 
 ---

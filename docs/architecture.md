@@ -1,7 +1,7 @@
 # ExpTracker — System Architecture
 
 > Living document. All architectural decisions resolved as of 30 Jun 2026.
-> Decision log in `threads/` directory. See `epics.md` for implementation breakdown.
+> Decision log in `docs/decisions/` directory. See `epics.md` for implementation breakdown.
 
 ---
 
