@@ -6,8 +6,13 @@
       "id": "T04",
       "question": "How do you make the app valuable to day-one users before crowdsourced comparison data exists?",
       "context": "Retailer comparison is only meaningful with data from multiple users across multiple stores.",
-      "status": "needs_discussion",
-      "tags": ["cold-start", "growth", "mvp", "data-seeding"],
+      "status": "resolved",
+      "tags": [
+        "cold-start",
+        "growth",
+        "mvp",
+        "data-seeding"
+      ],
       "posts": [
         {
           "id": "T04-P1",
@@ -20,6 +25,20 @@
           "author": "ai",
           "type": "suggestion",
           "message": "Sharing with friends works for testing, but it won't produce enough comparative data fast enough for the comparison feature to feel useful. Here are three approaches worth considering, in order of effort:\n\n1. MANUAL SEED DATA (Low effort, immediate value): Manually enter prices for the top 30-50 staple items (rice, eggs, cooking oil, milk, bread, chicken, etc.) at Singapore's 5 main grocery chains. This gives every day-one user an instant 'what's cheaper where' baseline without waiting for crowdsourced data. Label this data as 'Market baseline' so users know it's not from receipts.\n\n2. FOUNDER'S CLUB (Medium effort, strong incentive): Invite your first 50-100 users as 'Founders' — they get lifetime premium access in exchange for actively scanning receipts for 30 days. This creates motivated data contributors, not passive ones. Works better than casual friend-sharing.\n\n3. PERSONAL VALUE FIRST (Structural fix): Reframe the MVP so the app is already valuable WITHOUT comparison data. OCR tracking + expense analysis + spending trends = useful to a single user from day 1. Comparison becomes an additive feature that activates as data accumulates — not something users notice is missing.\n\nRecommendation: combine all three. Seed manually, recruit founders, and make sure solo use is valuable so users stick around long enough for comparison to kick in."
+        },
+        {
+          "id": "T04-P3",
+          "author": "user",
+          "type": "answer",
+          "message": "agree",
+          "timestamp": "2026-06-30T02:22:23.213Z"
+        },
+        {
+          "id": "T04-P4",
+          "author": "ai",
+          "type": "answer",
+          "message": "Great, glad we're aligned on these strategies. The combination of manual seed data, a Founder's Club, and ensuring strong personal value from day one should effectively address the cold-start problem.\n\nNext step on this front: For the manual seed data, let's start by defining the initial list of 30-50 staple items and assign who will collect that initial pricing data across the main grocery chains.",
+          "timestamp": "2026-06-30T02:22:26.108Z"
         }
       ]
     },
@@ -28,7 +47,10 @@
       "question": "What is the MVP feature set before retailer comparison is live?",
       "context": "What does a user get on day 1, before comparison data exists?",
       "status": "resolved",
-      "tags": ["mvp", "scope"],
+      "tags": [
+        "mvp",
+        "scope"
+      ],
       "posts": [
         {
           "id": "T05-P1",

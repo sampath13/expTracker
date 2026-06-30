@@ -25,8 +25,9 @@ const STATUSES = Object.entries(STATUS_CONFIG).map(([key, val]) => ({ key, label
 
 // ─── PostItem ─────────────────────────────────────────────────────────────────
 
-function PostItem({ post }) {
+function PostItem({ post, onRetryAi, retryDisabled }) {
   const typeCfg = TYPE_CONFIG[post.type] ?? TYPE_CONFIG.comment
+  const isUser = post.author !== 'ai'
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4">
@@ -49,6 +50,17 @@ function PostItem({ post }) {
               minute: '2-digit',
             })}
           </span>
+        )}
+
+        {isUser && onRetryAi && (
+          <button
+            onClick={onRetryAi}
+            disabled={retryDisabled}
+            title="Re-send to AI"
+            className="text-xs text-gray-400 hover:text-purple-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors leading-none px-1"
+          >
+            ↻
+          </button>
         )}
       </div>
 
@@ -75,6 +87,7 @@ function ReplyForm({ onReply, disabled }) {
   const [type, setType] = useState('answer')
   const [submitting, setSubmitting] = useState(false)
   const textareaRef = useRef(null)
+  const formRef = useRef(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -95,6 +108,7 @@ function ReplyForm({ onReply, disabled }) {
 
   return (
     <form
+      ref={formRef}
       onSubmit={handleSubmit}
       className="border border-gray-200 rounded-lg bg-white overflow-hidden"
     >
@@ -107,7 +121,10 @@ function ReplyForm({ onReply, disabled }) {
         disabled={disabled || submitting}
         className="w-full px-4 pt-3 pb-2 text-sm text-gray-800 resize-none outline-none placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit(e)
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()
+            formRef.current?.requestSubmit()
+          }
         }}
       />
 
@@ -125,7 +142,7 @@ function ReplyForm({ onReply, disabled }) {
               </option>
             ))}
           </select>
-          <span className="text-xs text-gray-300">⌘↵ to submit</span>
+          <span className="text-xs text-gray-300">↵ to submit, Shift+↵ new line</span>
         </div>
 
         <button
@@ -156,6 +173,10 @@ export default function ThreadDetail({ thread, fileId, onReply, onTriggerAi, aiS
 
   const handleUserReply = async (type, message) => {
     await onReply(type, message)
+    onTriggerAi(fileId, thread.id)
+  }
+
+  const handleRetryAi = () => {
     onTriggerAi(fileId, thread.id)
   }
 
@@ -227,7 +248,14 @@ export default function ThreadDetail({ thread, fileId, onReply, onTriggerAi, aiS
             No posts yet. Start the discussion below.
           </div>
         ) : (
-          thread.posts.map((post) => <PostItem key={post.id} post={post} />)
+          thread.posts.map((post) => (
+            <PostItem
+              key={post.id}
+              post={post}
+              onRetryAi={handleRetryAi}
+              retryDisabled={isAiThinking}
+            />
+          ))
         )}
         {isAiThinking && (
           <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 flex items-center gap-3">

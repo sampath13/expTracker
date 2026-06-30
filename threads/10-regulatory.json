@@ -6,8 +6,14 @@
       "id": "T24",
       "question": "Have you reviewed the specific data/financial regulations for your target market?",
       "context": "Singapore has its own data protection framework separate from GDPR or CCPA.",
-      "status": "needs_discussion",
-      "tags": ["regulatory", "pdpa", "singapore", "legal", "research"],
+      "status": "resolved",
+      "tags": [
+        "regulatory",
+        "pdpa",
+        "singapore",
+        "legal",
+        "research"
+      ],
       "posts": [
         {
           "id": "T24-P1",
@@ -27,8 +33,14 @@
       "id": "T25",
       "question": "Are you aware of any active regulatory scrutiny on grocery pricing in your target market?",
       "context": "e.g. UK CMA investigated supermarket pricing practices in 2023-2024.",
-      "status": "needs_discussion",
-      "tags": ["regulatory", "grocery", "pricing", "singapore", "research"],
+      "status": "resolved",
+      "tags": [
+        "regulatory",
+        "grocery",
+        "pricing",
+        "singapore",
+        "research"
+      ],
       "posts": [
         {
           "id": "T25-P1",

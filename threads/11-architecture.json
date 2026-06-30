@@ -6,14 +6,33 @@
       "id": "A1",
       "question": "Which navigation library and structure for the React Native app?",
       "context": "React Navigation v6 is the de-facto standard for bare React Native. The app needs a tab bar (Home, Expenses, Compare, Settings) plus stack navigators within each tab for drill-down screens.",
-      "status": "needs_discussion",
-      "tags": ["react-native", "navigation", "mobile", "architecture"],
+      "status": "resolved",
+      "tags": [
+        "react-native",
+        "navigation",
+        "mobile",
+        "architecture"
+      ],
       "posts": [
         {
           "id": "A1-P1",
           "author": "ai",
           "type": "suggestion",
           "message": "Recommendation: React Navigation v6 with a Bottom Tab Navigator wrapping four Stack Navigators.\n\nStructure:\n```\nBottomTabNavigator\n  ├── HomeStack       (Home → ScanReceipt → ConfirmOCR)\n  ├── ExpensesStack   (ExpenseList → BillDetail)\n  ├── CompareStack    (CompareHome → ItemDetail)\n  └── SettingsStack   (Settings → Profile)\n```\n\nInstall: `@react-navigation/native`, `@react-navigation/bottom-tabs`, `@react-navigation/native-stack`, plus peer deps `react-native-screens` and `react-native-safe-area-context`.\n\nDo NOT use `react-native-router-flux` or `react-native-navigation` (Wix) — both have significantly higher setup cost for minimal gain at MVP scale.\n\nConfirm this structure, or adjust if you want a different top-level layout."
+        },
+        {
+          "id": "A1-P2",
+          "author": "user",
+          "type": "comment",
+          "message": "don't have any suggestion at the moment but I would say first build the bare metal and then keep adding features - bare metail is layout, cross cutting concerns and so on.",
+          "timestamp": "2026-06-30T07:39:59.369Z"
+        },
+        {
+          "id": "A1-P3",
+          "author": "ai",
+          "type": "answer",
+          "message": "Agreed — navigation is absolutely part of the \"bare metal\" foundation. The proposed structure with React Navigation v6 gives us a solid, well-tested skeleton without overcomplicating the initial build. We can start with the four tabs and minimal stacks (maybe just one or two screens per tab), then layer in the deeper drill-down screens as each feature matures. That way we're not bloating the layout upfront, but we have the right architecture to scale cleanly.\n\nLet's lock in the Bottom Tab + Stack approach and set it up as part of the initial project scaffold. If any adjustments come up during the first feature builds, we'll tweak then.",
+          "timestamp": "2026-06-30T07:40:07.649Z"
         }
       ]
     },
@@ -21,14 +40,33 @@
       "id": "A2",
       "question": "Which state management approach for the React Native app?",
       "context": "The app needs to manage: auth state, current bill scan in progress, expense list (paginated), and comparison results. This is moderate complexity — not trivial, not enterprise-scale.",
-      "status": "needs_discussion",
-      "tags": ["react-native", "state-management", "mobile", "architecture"],
+      "status": "resolved",
+      "tags": [
+        "react-native",
+        "state-management",
+        "mobile",
+        "architecture"
+      ],
       "posts": [
         {
           "id": "A2-P1",
           "author": "ai",
           "type": "suggestion",
           "message": "Three realistic options:\n\n1. **Zustand** — lightweight, minimal boilerplate, no Provider wrapping, easy to colocate slices. Best fit for a small team / solo developer.\n2. **Redux Toolkit (RTK)** — more structured, RTK Query handles server cache well, better DevTools, higher setup cost.\n3. **React Context + useReducer** — no dependency, but does not scale well past ~3 contexts before performance becomes a concern.\n\nRecommendation: **Zustand** for MVP. You can migrate to RTK later if the team grows or complexity demands it. The scan-in-progress state (camera → OCR → confirm flow) is the most stateful part and maps cleanly to a single Zustand store slice.\n\nWhat is your preference?"
+        },
+        {
+          "id": "A2-P2",
+          "author": "user",
+          "type": "comment",
+          "message": "this is my first mobile app. I rely on your suggestion. look for battle tested solutions with less overhead",
+          "timestamp": "2026-06-30T07:42:21.398Z"
+        },
+        {
+          "id": "A2-P3",
+          "author": "ai",
+          "type": "answer",
+          "message": "I’d go with Zustand too. It’s battle-tested (used by many production apps including some big names), has almost no boilerplate, and you won't fight it while learning React Native. The trade-off vs RTK is mainly around built-in dev tools and caching helpers, but for this scope you can pair Zustand with React Query if you need server-state caching later — that combo keeps overhead low.\n\nBecause it’s your first mobile app, the minimal setup will also let you focus on the camera scan flow and receipt parsing without drowning in Redux patterns. Start with a single store, split by concern as you grow. You won’t outgrow it for this project.",
+          "timestamp": "2026-06-30T07:42:29.486Z"
         }
       ]
     },
@@ -36,14 +74,47 @@
       "id": "A3",
       "question": "How will personal bill data be stored locally on the device?",
       "context": "Users need to browse their expense history offline. The personal bills DB lives in the cloud but local caching is needed for a responsive UX.",
-      "status": "needs_discussion",
-      "tags": ["react-native", "local-storage", "offline", "mobile"],
+      "status": "resolved",
+      "tags": [
+        "react-native",
+        "local-storage",
+        "offline",
+        "mobile"
+      ],
       "posts": [
         {
           "id": "A3-P1",
           "author": "ai",
           "type": "suggestion",
           "message": "Options:\n\n1. **react-native-sqlite-storage** (or `op-sqlite`) — full relational queries, good for structured bill/item data, handles large datasets. More setup.\n2. **WatermelonDB** — high-performance reactive local DB built on SQLite, designed for React Native. Good if you want real-time list updates without manual cache invalidation.\n3. **AsyncStorage + in-memory** — simple key-value, not suitable for querying bill items by date/retailer/category.\n\nRecommendation: **WatermelonDB** if you want reactive UI (expense list updates immediately when a new bill is confirmed). **op-sqlite** (better-sqlite3 equivalent for RN) if you prefer raw SQL control. AsyncStorage is not appropriate for this data shape.\n\nFor MVP, a pragmatic choice is op-sqlite with a simple schema mirroring the cloud personal bills schema. Sync strategy: full pull on app load + optimistic local writes.\n\nDecision needed: reactive (WatermelonDB) vs raw SQL (op-sqlite)?"
+        },
+        {
+          "id": "A3-P2",
+          "author": "user",
+          "type": "answer",
+          "message": "WatermelonDB",
+          "timestamp": "2026-06-30T07:45:40.419Z"
+        },
+        {
+          "id": "A3-P3",
+          "author": "ai",
+          "type": "answer",
+          "message": "WatermelonDB is a solid call. Its lazy loading and record-level subscriptions mean the expense list will feel instant even when the local cache is large, and sync with the cloud can be incremental rather than full pulls every time.\n\nNext step would be defining the sync adapter — we’ll need to map the cloud personal bills schema to WatermelonDB’s model and decide on a conflict resolution strategy (most recent timestamp wins?). Happy to draft the initial schema and sync logic so we can start prototyping offline browsing.",
+          "timestamp": "2026-06-30T07:45:48.861Z"
+        },
+        {
+          "id": "A3-P4",
+          "author": "user",
+          "type": "answer",
+          "message": "I hope WatermelonDB is open source and free for commercial use",
+          "timestamp": "2026-06-30T07:46:34.983Z"
+        },
+        {
+          "id": "A3-P5",
+          "author": "ai",
+          "type": "answer",
+          "message": "WatermelonDB is indeed open source under the MIT license, so it’s completely free for commercial use with no restrictions. You can check the [LICENSE file](https://github.com/Nozbe/WatermelonDB/blob/master/LICENSE) on GitHub to confirm.\n\nThat’s one of the reasons it’s a popular choice for production apps—no hidden costs, and the community is pretty active. If you want extra peace of mind, we could also pin a specific version to avoid any unexpected changes upstream. But licensing-wise, we’re fully covered.\n\nWant me to draft the WatermelonDB model schema so we can start validating the outline interaction?",
+          "timestamp": "2026-06-30T07:46:40.578Z"
         }
       ]
     },
@@ -51,14 +122,47 @@
       "id": "A4",
       "question": "Which .NET version and which database for the personal bills backend?",
       "context": ".NET 8 is current LTS (supported until Nov 2026). .NET 9 is current STS. PostgreSQL and SQL Server are both viable; Azure SQL is managed SQL Server.",
-      "status": "needs_discussion",
-      "tags": ["dotnet", "backend", "database", "architecture"],
+      "status": "resolved",
+      "tags": [
+        "dotnet",
+        "backend",
+        "database",
+        "architecture"
+      ],
       "posts": [
         {
           "id": "A4-P1",
           "author": "ai",
           "type": "suggestion",
           "message": "**.NET version**: Use .NET 8 LTS. .NET 9 has a shorter support window (18 months) — not appropriate for a production app you intend to run for years. Upgrade to .NET 10 LTS when it ships (Nov 2025).\n\n**Database**: PostgreSQL over SQL Server for three reasons:\n1. No licensing cost (SQL Server Standard is ~USD 900/core/year)\n2. Native support on AWS RDS and Azure Database for PostgreSQL (managed, automated backups, point-in-time restore)\n3. Better JSON column support (useful if you store OCR raw output as JSONB for debugging)\n\nEF Core 8 + Npgsql is the standard stack and is well-maintained.\n\nPlanned schema is already documented in `architecture.md` section 5.1."
+        },
+        {
+          "id": "A4-P2",
+          "author": "user",
+          "type": "answer",
+          "message": ".net 10 with self hosted Postgres for development and AWS RDS for prod, aws s3 for storage",
+          "timestamp": "2026-06-30T07:48:58.242Z"
+        },
+        {
+          "id": "A4-P3",
+          "author": "ai",
+          "type": "answer",
+          "message": "Interesting proposal. Targeting .NET 10 makes sense if we're aligning with the next LTS, but note it ships in November 2025 and will require Preview tooling until then. For immediate development, we might consider starting with .NET 8 (current LTS) now and planning the upgrade path to .NET 10 once it stabilises — that gives us a production-ready stack today with a clear migration timeline.\n\nSelf-hosted Postgres for dev is pragmatic, but watch for version drift against AWS RDS (ensure both run the same major version, e.g., 16.x). S3 for storage is solid, though we should confirm if the OCR metadata is stored as JSONB in Postgres (as earlier suggested) or if we plan to offload that entirely to S3. Also worth discussing whether the dev environment will use Docker for Postgres to keep setup consistent.",
+          "timestamp": "2026-06-30T07:49:09.569Z"
+        },
+        {
+          "id": "A4-P4",
+          "author": "user",
+          "type": "answer",
+          "message": "todays date is 30 June 2026",
+          "timestamp": "2026-06-30T07:49:38.561Z"
+        },
+        {
+          "id": "A4-P5",
+          "author": "ai",
+          "type": "answer",
+          "message": "Given today’s date (30 June 2026), .NET 10 is now the current LTS — your proposal is exactly right. Starting with .NET 10 LTS gives us the full support window until November 2028, skipping the need for an early migration from .NET 8. The tooling is stable, and EF Core 10 with the latest Npgsql works well.\n\nSelf-hosted Postgres for dev is pragmatic. To avoid version drift, I’d suggest pinning the same major version as AWS RDS (e.g., 16.x or 17.x if RDS offers it) and using Docker Compose to keep local setup identical across the team. S3 for receipt images and OCR raw output is fine; storing the parsed metadata as JSONB in Postgres still makes sense for querying and analytics.\n\nOne thing to confirm: if we plan to use .NET Aspire for local orchestration, it now supports .NET 10 and has good integration with Postgres and AWS SDK — worth evaluating for the dev inner loop. Otherwise, the stack looks solid and we should proceed with finalising the schema in `architecture.md`.",
+          "timestamp": "2026-06-30T07:49:47.661Z"
         }
       ]
     },
@@ -66,14 +170,47 @@
       "id": "A5",
       "question": "Which authentication approach for the backend?",
       "context": "The app needs user registration, login, JWT issuance, and token refresh. Options range from self-managed ASP.NET Identity to fully-managed services like AWS Cognito or Firebase Auth.",
-      "status": "needs_discussion",
-      "tags": ["auth", "backend", "dotnet", "security"],
+      "status": "resolved",
+      "tags": [
+        "auth",
+        "backend",
+        "dotnet",
+        "security"
+      ],
       "posts": [
         {
           "id": "A5-P1",
           "author": "ai",
           "type": "suggestion",
           "message": "Three options:\n\n1. **ASP.NET Core Identity + JWT** — self-managed, full control, stores users in your PostgreSQL DB, no external dependency, no cost. Requires you to implement refresh token rotation, password reset flow, email verification.\n\n2. **AWS Cognito** — managed user pool, handles MFA, social login, token issuance. Free tier: 50,000 MAU. Tight AWS lock-in. Works well if you are going full AWS.\n\n3. **Firebase Authentication** — managed, generous free tier, cross-platform SDKs. Google lock-in. Slightly awkward to combine with a .NET + PostgreSQL backend since Firebase is GCP.\n\nRecommendation: **ASP.NET Core Identity + JWT** for MVP. It keeps your stack consistent (.NET handles everything), avoids lock-in, and the incremental cost of building the auth flows yourself is low given you only need email/password at MVP (no social login required initially).\n\nIf you later need magic-link login or social providers, you can add them to ASP.NET Identity without switching platforms.\n\nConfirm?"
+        },
+        {
+          "id": "A5-P2",
+          "author": "user",
+          "type": "answer",
+          "message": "how about Google authentication? almost all users have google accounts setup in their android and iOS devices",
+          "timestamp": "2026-06-30T07:51:35.324Z"
+        },
+        {
+          "id": "A5-P3",
+          "author": "ai",
+          "type": "answer",
+          "message": "Good point — Google sign-in is a natural fit for mobile users. We can absolutely support that while keeping our backend self-managed.\n\nASP.NET Core Identity supports external login providers like Google. The mobile app would use the Google Sign-In SDK to get an ID token, then send it to our backend. The backend verifies the token with Google’s API, creates or links a local account, and issues our own JWT. This way we still issue and control tokens, and we don’t depend on Cognito or Firebase to manage our user base.\n\nIt’s a clean compromise: users get the seamless Google login they expect, and we keep full ownership of auth flows, data, and our PostgreSQL stack. We can also offer email/password as a fallback. If later we want to add Apple or Facebook sign-in, it’s the same pattern.\n\nSo I’d recommend starting with ASP.NET Core Identity and adding Google as the first external provider from the MVP — just a bit more upfront integration effort but avoids any platform lock-in. What do you think?",
+          "timestamp": "2026-06-30T07:51:47.877Z"
+        },
+        {
+          "id": "A5-P4",
+          "author": "user",
+          "type": "answer",
+          "message": "aligned",
+          "timestamp": "2026-06-30T07:52:43.678Z"
+        },
+        {
+          "id": "A5-P5",
+          "author": "ai",
+          "type": "answer",
+          "message": "Great, glad we're aligned on using ASP.NET Core Identity + JWT with Google as the first external provider. This keeps our data and logic under our control while giving users a seamless sign-in experience.\n\nFrom an implementation standpoint, I'd suggest we plan for refresh token rotation from day one — it adds complexity but significantly reduces the window for token theft. Also, we'll need to handle the Google client IDs for both Android and iOS separately (the backend verifies them via the `sub` claim, so it's straightforward). If we later need Apple sign-in for App Store compliance, the pattern is identical.\n\nShall we start drafting the user schema and the authentication controller contract? I can put together a quick sequence diagram for the Google sign-in flow so the mobile team knows exactly which tokens to send and what to expect back.",
+          "timestamp": "2026-06-30T07:52:59.667Z"
         }
       ]
     },
@@ -81,14 +218,61 @@
       "id": "A6",
       "question": "How will the category pre-filter work in the Python OCR service before RapidFuzz matching?",
       "context": "Running RapidFuzz against the entire comparison pool item list is expensive. A category pre-filter narrows the candidate set first. But category detection from receipt text is non-trivial.",
-      "status": "needs_discussion",
-      "tags": ["python", "ocr", "fuzzy-matching", "performance"],
+      "status": "resolved",
+      "tags": [
+        "python",
+        "ocr",
+        "fuzzy-matching",
+        "performance"
+      ],
       "posts": [
         {
           "id": "A6-P1",
           "author": "ai",
           "type": "suggestion",
           "message": "Two viable approaches for MVP:\n\n1. **Keyword prefix filter**: Maintain a category → keyword prefix map (e.g. 'DAIRY': ['MLK', 'YGT', 'CHZ', 'MILK', 'YOGURT', 'CHEESE']). Match the first token of each OCR line item against the prefix list to assign a category, then run RapidFuzz only against items in that category. Fast, deterministic, easy to maintain manually for MVP item count (~200 items).\n\n2. **Embedding-based semantic filter**: Encode item names with a lightweight sentence transformer (e.g. `all-MiniLM-L6-v2`) and do vector similarity search to narrow candidates. More accurate, but adds model load time and memory overhead to the microservice.\n\nRecommendation: **Keyword prefix filter for MVP**. At 200–500 seed items, the entire comparison pool fits in memory and RapidFuzz can scan it in <50ms anyway — the pre-filter is an optimisation you may not need until you have tens of thousands of items. Build it simple first, profile later.\n\nFor multi-language receipts (English + Chinese on same receipt): PaddleOCR handles this natively — it detects script type per text block. Post-processing should normalise Chinese product names to a canonical English name using a lookup table seeded manually for the top 50 items."
+        },
+        {
+          "id": "A6-P2",
+          "author": "user",
+          "type": "answer",
+          "message": "why do we need this ?",
+          "timestamp": "2026-06-30T07:55:43.106Z"
+        },
+        {
+          "id": "A6-P3",
+          "author": "ai",
+          "type": "answer",
+          "message": "Good question. At our current scale (a few hundred items), RapidFuzz against the full list is fast enough — sub-50ms, so a pre-filter isn't strictly needed for performance *today*. The real motivation is future-proofing.\n\nOnce we hit thousands of items from crowdsourced receipts, a full scan per line becomes expensive, especially if the OCR service handles multiple requests concurrently. The category pre-filter reduces complexity from O(n) per line to O(n/category), which keeps latency predictable as the pool grows. It also protects against false matches: scanning everything might match a \"YOGURT\" line to a \"YOGURT-FLAVORED CANDY\" in a different category, so narrowing by department improves accuracy.\n\nIn short, we build it now because it's cheap to add a keyword map upfront, and it saves a painful refactor later when speed starts degrading. It’s an optimisation that hopefully stays invisible until it becomes essential.",
+          "timestamp": "2026-06-30T07:55:53.847Z"
+        },
+        {
+          "id": "A6-P4",
+          "author": "user",
+          "type": "answer",
+          "message": "is this for comparison engine ?",
+          "timestamp": "2026-06-30T07:58:07.545Z"
+        },
+        {
+          "id": "A6-P5",
+          "author": "ai",
+          "type": "answer",
+          "message": "Not exactly — the category pre-filter lives inside the **OCR service’s matching step**, which runs *before* the comparison engine gets involved. Here’s the flow:\n\n1. **OCR service** extracts line items (e.g., “YOGURT STRAWBERRY”) → runs RapidFuzz against the product DB to find the canonical product ID.  \n2. The matched product ID is sent to the **comparison engine**, which looks up prices across stores.\n\nThe pre-filter narrows candidate products *during step 1* so RapidFuzz doesn’t scan the entire catalog. The comparison engine itself doesn’t need this filter because it receives already-resolved product IDs. So it’s an optimisation inside the OCR service’s fuzzy matching, not in the comparison engine’s own logic.\n\nIf you’re asking whether the comparison engine could benefit from a category filter when computing price differences: no, that’s usually done with indexed product categories in the database, not with fuzzy text. The pre-filter is purely to speed up and improve the accuracy of turning receipt text into structured product IDs.",
+          "timestamp": "2026-06-30T07:58:16.400Z"
+        },
+        {
+          "id": "A6-P6",
+          "author": "user",
+          "type": "answer",
+          "message": "I am fine with it",
+          "timestamp": "2026-06-30T07:59:09.931Z"
+        },
+        {
+          "id": "A6-P7",
+          "author": "ai",
+          "type": "answer",
+          "message": "Glad you're on board with it. Since the keyword prefix filter is lightweight to implement and doesn't block other work, I'll go ahead and sketch out the initial keyword map (based on the top ~50 seed items) and get a PR up for the OCR service. We can keep the full‑scan fallback as a config toggle if we want to benchmark later. Let me know if you want me to prioritise any specific categories first (e.g., dairy, beverages) for the MVP.",
+          "timestamp": "2026-06-30T07:59:16.116Z"
         }
       ]
     },
@@ -96,14 +280,34 @@
       "id": "A7",
       "question": "AWS or Azure — final cloud provider decision?",
       "context": "Both AWS ap-southeast-1 (Singapore) and Azure Southeast Asia meet PDPA data residency requirements. The choice affects managed DB, container runtime, and object storage tooling.",
-      "status": "needs_discussion",
-      "tags": ["cloud", "aws", "azure", "infrastructure", "deployment"],
+      "status": "resolved",
+      "tags": [
+        "cloud",
+        "aws",
+        "azure",
+        "infrastructure",
+        "deployment"
+      ],
       "posts": [
         {
           "id": "A7-P1",
           "author": "ai",
           "type": "suggestion",
           "message": "Comparison for this specific stack (.NET + Python + PostgreSQL + S3-equivalent):\n\n| Concern | AWS | Azure |\n|---|---|---|\n| Managed PostgreSQL | RDS PostgreSQL / Aurora Serverless | Azure Database for PostgreSQL Flexible Server |\n| Container runtime | ECS Fargate or App Runner | Azure Container Apps |\n| Object storage | S3 (ap-southeast-1) | Azure Blob Storage (Southeast Asia) |\n| .NET affinity | Neutral | Slightly better (Microsoft stack) |\n| Free tier | 12-month free tier on many services | Similar free credits |\n| Singapore region | ap-southeast-1 ✓ | Southeast Asia (SG) ✓ |\n\nNeither is a wrong choice. If you have no existing cloud preference:\n- **AWS** if you are more familiar with it or plan to use Cognito for auth later\n- **Azure** if you prefer Microsoft-integrated tooling (.NET, VS Code, Azure DevOps)\n\nFor a solo/small team MVP, **AWS** has a marginally larger community and more Stack Overflow coverage for the exact service combination you need.\n\nWhat is your existing cloud experience / preference?"
+        },
+        {
+          "id": "A7-P2",
+          "author": "user",
+          "type": "answer",
+          "message": "aws as cloud. google for authenticating users",
+          "timestamp": "2026-06-30T08:00:30.946Z"
+        },
+        {
+          "id": "A7-P3",
+          "author": "ai",
+          "type": "answer",
+          "message": "Good call on AWS — it’s a solid pick for the stack, especially with the Singapore region locked in.  \n\nUsing Google for auth is straightforward. If you ever want to centralise identity, AWS Cognito can act as an OIDC broker and federate Google logins, but Firebase Auth (Google’s offering) also works fine on its own—just make sure the authentication flow integrates cleanly with your .NET/Python backend, whether via JWT validation or a server-side SDK.  \n\nHappy to help wires things up if you hit any bumps.",
+          "timestamp": "2026-06-30T08:00:38.022Z"
         }
       ]
     }

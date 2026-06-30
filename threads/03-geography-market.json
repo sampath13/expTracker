@@ -7,7 +7,10 @@
       "question": "Which market(s) are you targeting first?",
       "context": "UK, US, India, Australia, other?",
       "status": "resolved",
-      "tags": ["market", "geography"],
+      "tags": [
+        "market",
+        "geography"
+      ],
       "posts": [
         {
           "id": "T06-P1",
@@ -27,8 +30,12 @@
       "id": "T07",
       "question": "Are comparisons local (city/region), national, or global?",
       "context": "Prices can vary significantly by location even within the same retail chain.",
-      "status": "needs_discussion",
-      "tags": ["geography", "data-model", "scope"],
+      "status": "resolved",
+      "tags": [
+        "geography",
+        "data-model",
+        "scope"
+      ],
       "posts": [
         {
           "id": "T07-P1",
@@ -41,6 +48,34 @@
           "author": "ai",
           "type": "comment",
           "message": "Singapore-only is the right call for phase 1. However, one nuance worth thinking about: even within Singapore, prices at the same chain can vary by outlet. A NTUC FairPrice in Orchard Road may price differently to one in Woodlands or Jurong. Do you want to compare at:\n\n- CHAIN level: 'NTUC FairPrice vs Sheng Siong' (simpler, works with less data per outlet)\n- OUTLET level: 'NTUC FairPrice Clementi vs NTUC FairPrice Buona Vista' (more precise but needs higher data density per location)\n\nRecommendation for MVP: chain-level comparison. It's more universally actionable ('shop at Sheng Siong instead of Cold Storage') and requires less data to be meaningful. Outlet-level can come later when you have the volume to support it. Worth deciding now because it affects how you store the store metadata extracted from OCR (chain name only, vs chain + outlet address)."
+        },
+        {
+          "id": "T07-P3",
+          "author": "user",
+          "type": "answer",
+          "message": "I want to do at outlet level, even Indian retailer have chain of outlets and prices vary from outlet to outlet.",
+          "timestamp": "2026-06-30T05:51:15.351Z"
+        },
+        {
+          "id": "T07-P4",
+          "author": "ai",
+          "type": "answer",
+          "message": "Understood. The desire for outlet-level precision is definitely valid, as it offers the most accurate price insights, reflecting actual hyper-local variations.\n\nTo achieve this, we will need to ensure our OCR and data model are capable of extracting and storing specific outlet information (e.g., \"NTUC FairPrice Clementi Mall\" vs. \"NTUC FairPrice JEM\"). This means focusing on robust location extraction from receipts.\n\nFor the MVP, we can still *collect* and *store* this outlet-level data from day one. However, the *display* of comparisons might initially be aggregated at the chain level until we have sufficient data density for individual outlets to show meaningful outlet-to-outlet comparisons. This allows us to build towards outlet-level accuracy without delaying the initial launch.",
+          "timestamp": "2026-06-30T05:51:18.860Z"
+        },
+        {
+          "id": "T07-P5",
+          "author": "user",
+          "type": "answer",
+          "message": "agree",
+          "timestamp": "2026-06-30T05:51:47.707Z"
+        },
+        {
+          "id": "T07-P6",
+          "author": "ai",
+          "type": "answer",
+          "message": "Great. So we're aligned on the approach:\n\n1.  We will design the system to **collect and store outlet-level data** (e.g., \"NTUC FairPrice Clementi Mall\") from the start, as this offers the highest precision.\n2.  For the MVP, price comparisons will initially be **displayed at the chain level** (e.g., \"NTUC FairPrice\") to ensure meaningful insights even with lower initial data volume.\n3.  As our crowdsourced data grows, we will enable and display more granular **outlet-level comparisons**.\n\nThis gives us the best of both worlds: future-proofing for precision while delivering value early.",
+          "timestamp": "2026-06-30T05:51:50.462Z"
         }
       ]
     }

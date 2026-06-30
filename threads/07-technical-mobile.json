@@ -24,6 +24,20 @@
           "author": "ai",
           "type": "comment",
           "message": "Bare React Native is the right call for this app given camera + image processing requirements. Key library to use for camera: react-native-vision-camera (v3+). Do NOT use the older react-native-camera — it is deprecated and unmaintained.\n\nreact-native-vision-camera gives you:\n- High-res photo capture with format control\n- Frame processors (can run on-device ML if needed later)\n- Active maintenance and good community support\n- Works with both Android and iOS\n\nAlso needed: react-native-fs or @react-native-community/cameraroll for temporary local file management (storing the photo before upload). Plan this from the start rather than retrofitting it later."
+        },
+        {
+          "id": "T18-P3",
+          "author": "user",
+          "type": "comment",
+          "message": "what is the difference between your suggested libraries and react-native-permissions ?",
+          "timestamp": "2026-06-30T07:26:59.184Z"
+        },
+        {
+          "id": "T18-P4",
+          "author": "ai",
+          "type": "answer",
+          "message": "Great follow-up. The previous comment didn’t actually list `react-native-permissions`, but it’s an essential companion — these libraries serve different layers:\n\n- **react-native-vision-camera** → camera capture and frame processing  \n- **react-native-fs / cameraroll** → file I/O (save/read images)  \n- **react-native-permissions** → runtime permission handling (camera, storage, photo library)  \n\nYou’ll need all three. VisionCamera does include basic permission prompts, but for a production app where you need to handle denied/blocked states gracefully and request storage access separately (especially on Android 13+), `react-native-permissions` gives you consistent, fine‑grained control. They’re complementary, not alternatives — plan to wire them together from the start.",
+          "timestamp": "2026-06-30T07:27:09.004Z"
         }
       ]
     },
@@ -31,7 +45,7 @@
       "id": "T19",
       "question": "How will you handle camera permission and image quality differences across iOS and Android?",
       "context": "Android has changed storage permission model multiple times (Android 10, 11, 13). iOS requires explicit camera permission descriptions in Info.plist.",
-      "status": "needs_discussion",
+      "status": "resolved",
       "tags": [
         "react-native",
         "permissions",
@@ -58,6 +72,48 @@
           "type": "answer",
           "message": "agree with your suggestion.",
           "timestamp": "2026-06-29T21:01:07.076Z"
+        },
+        {
+          "id": "T19-P4",
+          "author": "user",
+          "type": "comment",
+          "message": "in another thread we decided we will use react-native, is this concern still valid ?",
+          "timestamp": "2026-06-30T07:25:39.397Z"
+        },
+        {
+          "id": "T19-P5",
+          "author": "ai",
+          "type": "answer",
+          "message": "Good question. Yes, the concern is still very much valid. Using React Native doesn’t change the underlying OS permission models — Android’s scoped storage and iOS’s mandatory Info.plist descriptions are still there. What React Native gives you is a single codebase, but you still need to declare permissions in each platform’s native files and request them at runtime.\n\nThe key win is using a library like `react-native-permissions` to abstract the cross‑platform differences from day one. That way, you write the permission check/request flow once and it adapts per OS version. If you skip this foundational setup now, you’ll have to retrofit it later when you hit platform‑specific rejections or subtle version differences. So I’d recommend building that flow into the camera/receipt scanning feature from the start — it’s cheap and saves rework.",
+          "timestamp": "2026-06-30T07:25:47.478Z"
+        },
+        {
+          "id": "T19-P6",
+          "author": "user",
+          "type": "comment",
+          "message": "another thread suggests to use all these three: \nreact-native-vision-camera → camera capture and frame processing\nreact-native-fs / cameraroll → file I/O (save/read images)\nreact-native-permissions → runtime permission handling (camera, storage, photo library)",
+          "timestamp": "2026-06-30T07:27:34.732Z"
+        },
+        {
+          "id": "T19-P7",
+          "author": "ai",
+          "type": "answer",
+          "message": "Good suggestion — that’s essentially a solid, proven stack for receipt scanning. Let me tie it back to the permission and quality questions in this thread:\n\n- **react-native-permissions** directly solves the runtime permission handling we discussed (camera, optional gallery access). With this library, the foundation is covered for both Android’s evolving scoped storage and iOS’s Info.plist descriptions.  \n- **react-native-vision-camera** gives you fine-grained control over image quality (format, resolution, compression) which is key for cross‑platform consistency. On iOS you can set `HDR` off and use `auto` white‑balance for uniform receipt images; on Android you can force a high enough resolution and compress consistently. That addresses the “image quality differences” part of the question.  \n- For **file I/O**, using `react-native-fs` with the app’s temporary/cache directory means you likely won’t need storage permissions at all on modern Android (and you can avoid `CameraRoll` unless you intentionally let users save to gallery). That simplifies the permission surface.\n\nOne minor note: if you do need to save receipts to the photo library later, `CameraRoll` requires `NSPhotoLibraryAddUsageDescription` on iOS and `WRITE_EXTERNAL_STORAGE` (or the new media permissions) on Android — but that can be added later. The stack you listed handles the core flow cleanly from day one.",
+          "timestamp": "2026-06-30T07:27:48.110Z"
+        },
+        {
+          "id": "T19-P8",
+          "author": "user",
+          "type": "comment",
+          "message": "Hope there is no open question on this thread. let me know",
+          "timestamp": "2026-06-30T07:28:32.049Z"
+        },
+        {
+          "id": "T19-P9",
+          "author": "ai",
+          "type": "answer",
+          "message": "Thanks for wrapping up — you’re right, all the key concerns in this thread have been addressed. To summarise the takeaways:\n\n- **Permissions**: Using `react-native-permissions` from day one covers runtime requests and adapts to Android’s evolving storage model (scoped storage, `READ_MEDIA_IMAGES`) and iOS’s `Info.plist` requirements. No storage permission is needed if we keep images in the app’s cache directory.\n- **Image quality**: `react-native-vision-camera` gives us fine control over resolution, compression, and format, letting us standardise across platforms.\n- **The suggested stack** (vision-camera, react-native-fs, react-native-permissions) is a solid foundation — it handles the core capture and permission flow without unnecessary complexity.\n\nNo open questions from my side. We have a clear direction and can start implementing the permission + capture logic as a self-contained module. Feel free to close the thread.",
+          "timestamp": "2026-06-30T07:28:41.050Z"
         }
       ]
     }

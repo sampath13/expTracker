@@ -4,16 +4,15 @@ import cors from 'cors'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = 3001
 const THREADS_DIR = path.join(__dirname, '..', 'threads')
 
-const genAI = process.env.GEMINI_API_KEY
-  ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-  : null
+const GO_API_KEY = process.env.OPENCODE_GO_API_KEY
+const GO_MODEL = process.env.OPENCODE_GO_MODEL || 'deepseek-v4-flash'
+const GO_ENDPOINT = 'https://opencode.ai/zen/go/v1/chat/completions'
 
 app.use(cors())
 app.use(express.json({ limit: '10mb' }))
@@ -103,10 +102,10 @@ app.put('/api/threads/:fileId/:threadId/status', (req, res) => {
   res.json({ success: true })
 })
 
-// POST ask AI for a reply — sends full thread to Gemini, posts AI response
+// POST ask AI for a reply — sends full thread to OpenCode Go, posts AI response
 app.post('/api/threads/:fileId/:threadId/ai-reply', async (req, res) => {
-  if (!genAI) {
-    return res.status(503).json({ error: 'GEMINI_API_KEY not configured. Copy .env.example to .env and set your key.' })
+  if (!GO_API_KEY) {
+    return res.status(503).json({ error: 'OPENCODE_GO_API_KEY not configured. Copy .env.example to .env and set your key.' })
   }
 
   const { fileId, threadId } = req.params
@@ -156,13 +155,46 @@ app.post('/api/threads/:fileId/:threadId/ai-reply', async (req, res) => {
     .join('\n')
 
   try {
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
-      systemInstruction: systemPrompt,
+    console.log('\n' + '='.repeat(60))
+    console.log(`AI REQUEST — ${threadId} (${fileId}) → ${GO_MODEL}`)
+    console.log('='.repeat(60))
+    console.log('[SYSTEM]')
+    console.log(systemPrompt)
+    console.log('-'.repeat(40))
+    console.log('[USER CONTENT]')
+    console.log(userContent)
+    console.log('='.repeat(60))
+
+    const goRes = await fetch(GO_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GO_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: GO_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userContent },
+        ],
+      }),
     })
 
-    const result = await model.generateContent(userContent)
-    const aiMessage = result.response.text()
+    if (!goRes.ok) {
+      const errBody = await goRes.text()
+      throw new Error(`OpenCode Go ${goRes.status}: ${errBody}`)
+    }
+
+    const json = await goRes.json()
+    const aiMessage = json.choices?.[0]?.message?.content
+
+    if (!aiMessage) {
+      throw new Error('OpenCode Go returned empty response')
+    }
+
+    console.log('[AI RESPONSE]')
+    console.log(aiMessage)
+    console.log('='.repeat(60) + '\n')
 
     const newPost = {
       id: `${threadId}-P${thread.posts.length + 1}`,
@@ -176,7 +208,7 @@ app.post('/api/threads/:fileId/:threadId/ai-reply', async (req, res) => {
     writeFile(fileId, data)
     res.json({ success: true, post: newPost })
   } catch (err) {
-    console.error('Gemini API error:', err)
+    console.error('AI API error:', err)
     res.status(502).json({ error: err.message || 'AI request failed' })
   }
 })

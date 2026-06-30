@@ -6,7 +6,7 @@
       "id": "T01",
       "question": "What categories of retailers are you comparing?",
       "context": "Groceries only? All retail: restaurants, fuel, pharmacies? Or everything?",
-      "status": "needs_discussion",
+      "status": "resolved",
       "tags": [
         "scope",
         "mvp",
@@ -52,7 +52,7 @@
       "id": "T02",
       "question": "Is comparison at item-level (specific product) or basket/total level?",
       "context": "e.g. I buy 10 items from a shop — show what each item would cost at another shop.",
-      "status": "needs_discussion",
+      "status": "resolved",
       "tags": [
         "scope",
         "data-model",
@@ -70,6 +70,76 @@
           "author": "ai",
           "type": "comment",
           "message": "Item-level is the right direction — it gives users actionable, granular insight rather than just a vague total. However there are two things to think through: \n\n1. DATA AVAILABILITY GATE: You can only show a comparison for an item if you have seen that exact item (by fuzzy match) at at least one OTHER store. Until that cross-store data exists for an item, show 'No comparison data yet' rather than silence or a broken state. Be upfront about this — users will understand, especially early on.\n\n2. UNIT NORMALISATION: This is easy to miss. A receipt might say 'RICE 5KG $12.50' at one store and 'RICE 1KG $2.80' at another. Without normalising to a price-per-unit ($/kg, $/litre), your comparison will be misleading. You need to extract quantity + unit from the OCR output and store price-per-unit as the comparison field, not raw price.\n\nShould we open a sub-thread on the data model for item-level storage?"
+        },
+        {
+          "id": "T02-P3",
+          "author": "user",
+          "type": "answer",
+          "message": "I Agee with you but we can discuss these low level detail later.",
+          "timestamp": "2026-06-30T03:54:08.360Z"
+        },
+        {
+          "id": "T02-P4",
+          "author": "ai",
+          "type": "answer",
+          "message": "Agreed, let's keep the discussion at a higher level for now.\n\nSince we're aligned on item-level comparison, the next key area is *how* we present this information to the user within the app. What are your initial thoughts on the user experience? For instance, after a user uploads a receipt, should they see a summary of potential savings, or a detailed breakdown item by item, or both?",
+          "timestamp": "2026-06-30T03:54:10.292Z"
+        },
+        {
+          "id": "T02-P5",
+          "author": "user",
+          "type": "answer",
+          "message": "I am thinking of this: user loads a receipt and confirms information is correct and submits, BE do an item wise comparison, show green, grey, amber or red background in the price/item background denoting this item is less/equal/moderate high/very high. on click of an info icon or more details we can show a list of other shops which offer for less price. this is my initial idea",
+          "timestamp": "2026-06-30T03:56:48.689Z"
+        },
+        {
+          "id": "T02-P6",
+          "author": "ai",
+          "type": "answer",
+          "message": "That's a great initial idea for presenting the comparison! Using color-coded backgrounds (green/grey/amber/red) for immediate visual feedback on each item's price is intuitive and helps users quickly identify areas of potential savings. The progressive disclosure with an info icon to show other shops' prices is also an excellent pattern.\n\nMy main thought on this approach revolves around the **benchmark and thresholds** for those color indicators. For \"less/equal/moderate high/very high\" to be truly useful, we need to clearly define what each category means.\n\nFor instance:\n*   **Green (Less):** Is this \"cheaper than the lowest price we've seen anywhere else?\" Or \"cheaper than the average across all stores?\"\n*   **Grey (Equal):** Does this mean the price is identical across all shops where we have data? This might be rare for many items. Perhaps it could mean \"within a very small margin\" or \"no significant difference.\"\n*   **Amber (Moderate High) / Red (Very High):** What percentage difference or absolute dollar amount makes an item \"moderate\" versus \"very high\" compared to the cheapest available, or to an average?\n\nDefining these benchmarks and thresholds will be crucial for the accuracy and consistency of the visual feedback. What are your thoughts on how we should establish these comparison points and the specific criteria for each color category?",
+          "timestamp": "2026-06-30T03:56:53.728Z"
+        },
+        {
+          "id": "T02-P7",
+          "author": "user",
+          "type": "answer",
+          "message": "you let me know your thoughts on these benchmarks and thresholds, I will review",
+          "timestamp": "2026-06-30T03:58:20.135Z"
+        },
+        {
+          "id": "T02-P8",
+          "author": "ai",
+          "type": "answer",
+          "message": "Okay, let's break down benchmarks and thresholds for each color category. The goal is to give users clear, actionable insights, so the comparison should ideally be against the *best available price* we've observed.\n\nHere are my thoughts:\n\n1.  **Green (Good Deal):**\n    *   **Benchmark:** The absolute lowest price we've seen for that item (per unit, e.g., $/kg) across all stores with recent data.\n    *   **Threshold:** User's purchased price is **equal to or within 5%** of this lowest observed price. This acknowledges that minor fluctuations or slight rounding differences aren't significant.\n    *   **Meaning:** \"You got a great deal on this item; it's among the cheapest available.\"\n\n2.  **Grey (Typical Price / No Significant Difference):**\n    *   **Benchmark:** The average price observed for the item, or a range around the lowest price.\n    *   **Threshold:** User's purchased price is **between 5% and 15% higher** than the lowest observed price. This range indicates it's not the best deal, but also not exorbitantly expensive.\n    *   **Meaning:** \"This price is pretty standard; you could likely find it cheaper elsewhere, but it's not a rip-off.\"\n\n3.  **Amber (Moderate High):**\n    *   **Benchmark:** The lowest price observed.\n    *   **Threshold:** User's purchased price is **between 15% and 30% higher** than the lowest observed price.\n    *   **Meaning:** \"You paid noticeably more than necessary for this item. Significant savings are possible if bought elsewhere.\"\n\n4.  **Red (Very High / Expensive):**\n    *   **Benchmark:** The lowest price observed.\n    *   **Threshold:** User's purchased price is **more than 30% higher** than the lowest observed price.\n    *   **Meaning:** \"You paid a premium for this item. There are much cheaper alternatives available, representing a considerable missed saving.\"\n\n**Additional Considerations:**\n\n*   **\"No Comparison Data\":** For items where we lack cross-store data, we should use a distinct visual indicator, perhaps a very light grey background with a \"No comparison data yet\" label, rather than confusing it with a \"typical price\" (our proposed darker grey).\n*   **Data Freshness:** The \"lowest observed price\" should be recent, perhaps from within the last 30-60 days, to ensure relevance. We don't want to compare against a sale price from six months ago.\n\nThese thresholds provide a starting point. We can always refine them based on user feedback and data analysis once the feature is live. What are your thoughts on these definitions?",
+          "timestamp": "2026-06-30T03:58:28.038Z"
+        },
+        {
+          "id": "T02-P9",
+          "author": "user",
+          "type": "answer",
+          "message": "I think the lowest price observed is half true but what is the time frame for lowest price consideration ?",
+          "timestamp": "2026-06-30T05:44:52.354Z"
+        },
+        {
+          "id": "T02-P10",
+          "author": "ai",
+          "type": "answer",
+          "message": "You've hit on a critical point that I briefly mentioned earlier, but it absolutely warrants more specific discussion. You're right, \"lowest price observed\" is only useful if it's recent.\n\nFor the \"lowest price observed\" benchmark, I propose we consider prices from the **last 30 days as the primary data source**. If no data is available within 30 days, we could extend that to **60 days** as a fallback, but clearly mark or indicate that the comparison might be based on slightly older data.\n\nThe 30-day window aims to capture current market prices and account for typical promotional cycles or price changes without being outdated. Using anything older significantly risks comparing against irrelevant, historical prices.\n\nWhat do you think about these timeframes for price freshness?",
+          "timestamp": "2026-06-30T05:44:55.260Z"
+        },
+        {
+          "id": "T02-P11",
+          "author": "user",
+          "type": "answer",
+          "message": "yes, good strategy for `lowest price observed`. Draft the entire strategy again",
+          "timestamp": "2026-06-30T05:49:53.047Z"
+        },
+        {
+          "id": "T02-P12",
+          "author": "ai",
+          "type": "answer",
+          "message": "Okay, let's consolidate the entire strategy for item-level comparison benchmarks and thresholds, incorporating our discussion on price freshness.\n\n**Overall Strategy: Item-Level Price Comparison & Visual Indicators**\n\nOur goal is to provide users with immediate, actionable insights on their grocery purchases. After a user uploads a receipt and confirms its details, our backend will perform an item-wise comparison against a defined benchmark. The results will be displayed with color-coded backgrounds on each item's price, with progressive disclosure for detailed alternative prices.\n\n**Benchmark Definition: \"Lowest Observed Price\"**\nThe primary benchmark for comparison will be the **lowest unit price (e.g., $/kg, $/litre) we have observed for that exact item across all stores within the last 30 days.** If no data is available within 30 days, we will extend the search to the last **60 days**. If still no comparable data exists within 60 days, the item will be marked as \"No Comparison Data.\"\n\n**Color Category Definitions and Thresholds:**\n\n1.  **Green (Good Deal):**\n    *   **Threshold:** User's purchased price is **equal to or within 5%** of the Lowest Observed Price.\n    *   **Meaning:** \"You got a great deal on this item; it's among the cheapest available.\"\n\n2.  **Grey (Typical Price / No Significant Difference):**\n    *   **Threshold:** User's purchased price is **between 5% and 15% higher** than the Lowest Observed Price.\n    *   **Meaning:** \"This price is pretty standard; you could likely find it cheaper elsewhere, but it's not a rip-off.\"\n\n3.  **Amber (Moderate High):**\n    *   **Threshold:** User's purchased price is **between 15% and 30% higher** than the Lowest Observed Price.\n    *   **Meaning:** \"You paid noticeably more than necessary for this item. Significant savings are possible if bought elsewhere.\"\n\n4.  **Red (Very High / Expensive):**\n    *   **Threshold:** User's purchased price is **more than 30% higher** than the Lowest Observed Price.\n    *   **Meaning:** \"You paid a premium for this item. There are much cheaper alternatives available, representing a considerable missed saving.\"\n\n**\"No Comparison Data\" Indication:**\nFor items where we lack cross-store data within the 60-day window, we will use a distinct visual indicator (e.g., a very light grey background) with a clear \"No comparison data yet\" label. This prevents confusion with \"Typical Price\" and sets appropriate user expectations for a crowdsourced dataset.\n\nThis strategy provides a robust framework for delivering meaningful price comparisons to our users.",
+          "timestamp": "2026-06-30T05:49:58.469Z"
         }
       ]
     },
@@ -77,7 +147,7 @@
       "id": "T03",
       "question": "How will you handle product name variations across retailers?",
       "context": "e.g. 'GREAT VALUE 2% MILK 1GL' vs 'MILK 2PCT GALLON GV' for the same product at different stores.",
-      "status": "needs_discussion",
+      "status": "resolved",
       "tags": [
         "data-quality",
         "nlp",
@@ -95,6 +165,48 @@
           "author": "ai",
           "type": "concern",
           "message": "Fuzzy matching is the right instinct but 'if no match, treat as different' will create a database full of orphan items, especially in phase 1 when volume is low. Every unmatched item is a missed comparison opportunity. Suggest a three-tier confidence model instead:\n\n- HIGH confidence (score > 85%): auto-match silently\n- MEDIUM confidence (60-85%): show user 'Is this the same as [X]? Yes / No' — crowdsourced confirmation improves the model over time\n- LOW confidence (< 60%): treat as different item\n\nAlso important: apply category as a pre-filter before fuzzy matching. Don't fuzzy-match 'OLIVE OIL 500ML' against 'OLAY MOISTURISER 50ML' just because the strings look similar. Matching should happen within the same product category first.\n\nFor the fuzzy library: if your Python service handles OCR, use RapidFuzz (drop-in replacement for FuzzyWuzzy, much faster). Token set ratio works better than simple ratio for receipt-style strings."
+        },
+        {
+          "id": "T03-P3",
+          "author": "user",
+          "type": "answer",
+          "message": "agree",
+          "timestamp": "2026-06-30T02:17:00.523Z"
+        },
+        {
+          "id": "T03-P4",
+          "author": "ai",
+          "type": "answer",
+          "message": "Great, glad we're aligned on the confidence model and category pre-filtering.\n\nTo make the category pre-filter effective, we'll need a robust way to categorize items from receipts. What's our proposed approach for initial categorization? Will this also be crowdsourced, or do we start with a predefined list and mapping?",
+          "timestamp": "2026-06-30T02:17:02.316Z"
+        },
+        {
+          "id": "T03-P5",
+          "author": "user",
+          "type": "answer",
+          "message": "maybe predefined list and mapping",
+          "timestamp": "2026-06-30T02:17:36.880Z"
+        },
+        {
+          "id": "T03-P6",
+          "author": "ai",
+          "type": "answer",
+          "message": "A predefined list and mapping is a sensible starting point for initial categorization, especially to get us off the ground quickly.\n\nTo build this, we can start with common supermarket categories (e.g., Dairy, Produce, Snacks, Beverages, Household) and create a core mapping of keywords or regex patterns to these categories. This gives us a baseline to work with.\n\nFor items that don't fit these initial patterns, or for refining existing mappings, we can introduce a crowdsourcing element. Users could confirm categories for new items, or flag incorrect categorizations. This iterative feedback loop will strengthen our predefined list and mapping over time, reducing the number of \"uncategorized\" items.",
+          "timestamp": "2026-06-30T02:17:40.206Z"
+        },
+        {
+          "id": "T03-P7",
+          "author": "user",
+          "type": "answer",
+          "message": "I don't think users will have time to categorize :)",
+          "timestamp": "2026-06-30T02:19:01.428Z"
+        },
+        {
+          "id": "T03-P8",
+          "author": "ai",
+          "type": "answer",
+          "message": "That's a very valid point; expecting users to actively categorize every item could definitely create friction and impact adoption. We need to make this process as effortless as possible for them.\n\nInstead of direct categorization, we can significantly strengthen our *initial predefined list and mapping*. This would involve a more robust keyword/regex approach, and potentially even leveraging external product databases or open-source datasets to enrich our initial category mappings. The goal is to maximize the accuracy of our automated categorization from the outset.\n\nFor continuous refinement, we can integrate *passive* feedback mechanisms rather than asking for active categorization. For example, when a user adds an item to their shopping list, we can pre-fill a suggested category. If they proceed without changing it, that's an implicit confirmation. If they *do* change it, that's valuable explicit feedback for our model without requiring them to start from scratch. This shifts the effort from creating to simply correcting.",
+          "timestamp": "2026-06-30T02:19:08.065Z"
         }
       ]
     }

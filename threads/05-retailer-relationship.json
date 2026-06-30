@@ -6,8 +6,13 @@
       "id": "T12",
       "question": "Do retailers know they are being benchmarked?",
       "context": "Operating without retailer knowledge raises potential legal and reputational questions.",
-      "status": "needs_discussion",
-      "tags": ["legal", "retailers", "transparency", "singapore"],
+      "status": "resolved",
+      "tags": [
+        "legal",
+        "retailers",
+        "transparency",
+        "singapore"
+      ],
       "posts": [
         {
           "id": "T12-P1",
@@ -28,7 +33,11 @@
       "question": "Will you pursue retailer partnerships (like Ibotta/Fetch Rewards) or operate passively?",
       "context": "Partnerships can provide seed data and revenue but change the app's independence.",
       "status": "resolved",
-      "tags": ["partnerships", "strategy", "mvp"],
+      "tags": [
+        "partnerships",
+        "strategy",
+        "mvp"
+      ],
       "posts": [
         {
           "id": "T13-P1",
@@ -49,7 +58,12 @@
       "question": "If a retailer objects to being benchmarked as 'expensive', how do you handle that?",
       "context": "Framing and language choices determine whether retailers see the app as fair or adversarial.",
       "status": "resolved",
-      "tags": ["ux", "framing", "legal", "communication"],
+      "tags": [
+        "ux",
+        "framing",
+        "legal",
+        "communication"
+      ],
       "posts": [
         {
           "id": "T14-P1",

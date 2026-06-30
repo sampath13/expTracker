@@ -7,7 +7,11 @@
       "question": "What is the primary revenue model at launch?",
       "context": "Freemium, subscription, retailer advertising, B2B data licensing.",
       "status": "resolved",
-      "tags": ["business-model", "revenue", "freemium"],
+      "tags": [
+        "business-model",
+        "revenue",
+        "freemium"
+      ],
       "posts": [
         {
           "id": "T22-P1",
@@ -20,6 +24,34 @@
           "author": "ai",
           "type": "comment",
           "message": "Freemium is the right launch model. Cross-reference with T09 on gating strategy — the key decision is whether the free tier is access-limited (N comparisons/month) or depth-limited (basic comparison free, advanced insights paid). That decision should be made before building the comparison feature so the gate is baked in from day one, not retrofitted. Revisit this thread once T09 is resolved."
+        },
+        {
+          "id": "T22-P3",
+          "author": "user",
+          "type": "comment",
+          "message": "how likely are the organic users engage with the app ? because the primary goal of the app is to compare retailer prices, it is likely, once users know which retail stores offer better prices, they likely not use the app at all. what makes the users use the app ? I think we need to extend the scope of the app for other expense type to in the initial launch itself, else I do not see a point of users becoming organic.",
+          "timestamp": "2026-06-29T23:55:31.887Z"
+        },
+        {
+          "id": "T22-P4",
+          "author": "ai",
+          "type": "answer",
+          "message": "That's a very perceptive point, and it touches on a critical aspect of user engagement for a comparison feature. You're right that if prices were static, the utility would diminish quickly.\n\nOur strategy to counter this is two-fold:\n\n1.  **Dynamic Pricing & Real-Time Relevance:** Grocery prices in Singapore are constantly fluctuating. Our core value proposition isn't to provide a one-time \"best store\" answer, but to offer *real-time, crowdsourced comparisons*. This means users will ideally engage regularly (e.g., before each grocery trip) to find the *current* best deals for their specific basket of goods, which can change weekly or even daily.\n2.  **Expense Tracker as the Foundation:** The app's primary function is an expense tracker. The grocery price comparison feature is a significant value-add built on top of it, powered by users contributing their receipts. This core utility of managing personal finances provides a consistent reason for users to open the app, even if they're not always doing a price comparison. Contributing receipts also provides a loop back into the comparison engine.\n\nExpanding the scope to other expense types for *comparison* at launch could dilute our focus and delay getting a robust grocery feature out. Let's aim to perfect the grocery experience and expense tracking first, and then strategically expand based on user feedback and demonstrated demand.",
+          "timestamp": "2026-06-29T23:55:38.158Z"
+        },
+        {
+          "id": "T22-P5",
+          "author": "user",
+          "type": "comment",
+          "message": "so you are saying we build expenses tracking at the foundation feature and comparison as a value-add ?",
+          "timestamp": "2026-06-29T23:57:58.630Z"
+        },
+        {
+          "id": "T22-P6",
+          "author": "ai",
+          "type": "answer",
+          "message": "Yes, that's exactly right. The expense tracker is the foundational feature, providing a consistent reason for daily or weekly engagement. The grocery price comparison feature is the unique, high-value add-on that differentiates us and encourages receipt contributions, which in turn fuels the comparison engine.\n\nThis structure allows us to build a sustainable user base around personal finance management, with the comparison feature acting as a powerful incentive for premium subscriptions and continuous usage due to its dynamic nature.",
+          "timestamp": "2026-06-29T23:58:00.525Z"
         }
       ]
     },
@@ -28,7 +60,12 @@
       "question": "At what user scale does the advertising model become viable?",
       "context": "Advertising to a small user base is both low-revenue and potentially damaging to trust.",
       "status": "deferred",
-      "tags": ["business-model", "advertising", "scale", "deferred"],
+      "tags": [
+        "business-model",
+        "advertising",
+        "scale",
+        "deferred"
+      ],
       "posts": [
         {
           "id": "T23-P1",
@@ -41,6 +78,20 @@
           "author": "ai",
           "type": "comment",
           "message": "Deferred is fine — this is a phase-2 decision. When you do revisit it, the two models to evaluate are:\n\n1. RETAILER-SPONSORED PLACEMENT: Retailers pay to surface deals/offers to users who buy relevant products (e.g. NTUC FairPrice promotes a deal on users who regularly buy cooking oil). Requires retailer relationships and a consent framework (see T10/T11).\n\n2. AGGREGATED INSIGHTS LICENSING: Sell anonymised trend reports to FMCG brands or market research firms ('Brand X's price sensitivity across Singapore grocery chains over Q1'). No user targeting — just aggregate analytics. Higher margin, lower trust risk, but requires substantial data volume.\n\nA rough threshold for advertising viability: 5,000-10,000 monthly active Singapore users with consistent scan behaviour. Below that, the data is too thin for meaningful targeting or licensing."
+        },
+        {
+          "id": "T23-P3",
+          "author": "user",
+          "type": "comment",
+          "message": "I think it is too early to think of advertising",
+          "timestamp": "2026-06-30T07:36:47.029Z"
+        },
+        {
+          "id": "T23-P4",
+          "author": "ai",
+          "type": "answer",
+          "message": "Totally agree. We're not even at the point where we need to worry about revenue beyond covering costs. Right now, trust is the only currency that matters — any whiff of ads or monetisation too early could kill the network effect before it starts. Let's keep it deferred and only revisit when we're approaching serious MAU milestones. No need to burn mental cycles on it for now.",
+          "timestamp": "2026-06-30T07:36:54.722Z"
         }
       ]
     }

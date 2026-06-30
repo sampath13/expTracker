@@ -33,7 +33,7 @@
       "id": "T21",
       "question": "Where will receipt images be stored, and for how long?",
       "context": "Images contain sensitive receipt data and should not persist longer than necessary.",
-      "status": "needs_discussion",
+      "status": "resolved",
       "tags": [
         "storage",
         "privacy",
@@ -60,6 +60,48 @@
           "type": "answer",
           "message": "1. cloud storage - AWS S3, \n2. object life cycle\n3. yes, backend should clean up\n4. yes\n5. yes",
           "timestamp": "2026-06-29T21:02:28.576Z"
+        },
+        {
+          "id": "T21-P4",
+          "author": "user",
+          "type": "comment",
+          "message": "are my answers relevant ?",
+          "timestamp": "2026-06-29T23:59:54.631Z"
+        },
+        {
+          "id": "T21-P5",
+          "author": "ai",
+          "type": "answer",
+          "message": "Yes, your answers are highly relevant and align perfectly with the proposed secure and efficient data handling strategy.\n\nWith your confirmations, we have strong alignment on these critical points:\n\n*   **AWS S3 (Singapore region):** Excellent choice for cloud storage, ensuring PDPA compliance for data residency.\n*   **Object Lifecycle Policy:** Simplest and most reliable method for enforcing the 2-hour TTL for failed sessions.\n*   **Explicit Backend Cleanup:** Best practice for immediate deletion on the success path.\n*   **No Image Persistence on Phone:** Crucial for user privacy and reducing local storage footprint.\n*   **Text-Only for Comparison DB:** Ensures the comparison feature operates only on necessary, non-sensitive data.\n\nThis direction provides a solid foundation for implementing the receipt image storage and processing with privacy and security in mind.",
+          "timestamp": "2026-06-29T23:59:57.577Z"
+        },
+        {
+          "id": "T21-P6",
+          "author": "user",
+          "type": "comment",
+          "message": "any open questions further on this ?",
+          "timestamp": "2026-06-30T00:00:58.268Z"
+        },
+        {
+          "id": "T21-P7",
+          "author": "ai",
+          "type": "answer",
+          "message": "No, for the specific scope of where receipt images will be stored and for how long, all primary questions are now comprehensively resolved.\n\nWe have a clear and aligned strategy: AWS S3 (Singapore region) as the temporary storage, with immediate deletion on successful OCR or a 2-hour lifecycle policy for failed attempts. Images will not persist on user phones beyond the upload, and only text data will flow to the comparison database.\n\nThis solidifies the approach for handling receipt images securely and privately. Implementation details like specific S3 bucket security settings (IAM roles, encryption) and robust error handling during the upload/processing will be part of the detailed design phase, but the core policy is set.",
+          "timestamp": "2026-06-30T00:01:05.895Z"
+        },
+        {
+          "id": "T21-P8",
+          "author": "user",
+          "type": "comment",
+          "message": "will this anyway tie to PDPA ?",
+          "timestamp": "2026-06-30T07:29:29.177Z"
+        },
+        {
+          "id": "T21-P9",
+          "author": "ai",
+          "type": "answer",
+          "message": "Yes, the proposed storage and retention strategy directly ties to PDPA compliance.\n\nBy storing images only temporarily in a Singapore AWS region, we satisfy the **data residency** and **retention limitation** obligations — keeping data only as long as necessary for the documented purpose (OCR processing). Immediate deletion on success and a 2-hour TTL on failure align with **purpose limitation** and **accuracy** considerations.\n\nOn the protection side, using S3 with encryption and IAM restrictions covers **security safeguards**. Since the processed text data (item name, price, etc.) is what enters the comparison DB — not the image — we naturally minimize the data used for secondary features, supporting **notification and consent** principles.\n\nSo yes, every layer of this design (storage location, lifecycle policy, immediate cleanup, phone-side deletion) was chosen with PDPA requirements in mind. The next step would be to document these decisions in a Data Protection Impact Assessment (DPIA) and ensure user consent covers the temporary image processing explicitly.",
+          "timestamp": "2026-06-30T07:29:36.860Z"
         }
       ]
     }
