@@ -1,0 +1,14 @@
+fastapi[standard]>=0.115,<1
+uvicorn[standard]>=0.34,<1
+pydantic>=2.10,<3
+pydantic-settings>=2.7,<3
+opencv-python-headless>=4.10,<5
+paddleocr>=3.1,<4
+paddlepaddle>=3.1,<4
+rapidfuzz>=3.11,<4
+boto3>=1.36,<2
+httpx>=0.28,<1
+python-multipart>=0.0.19,<1
+pytest>=8.3,<9
+pytest-asyncio>=0.25,<1
+ruff>=0.9,<1

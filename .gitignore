@@ -12,3 +12,41 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Node
+node_modules/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+*.egg
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+packages/
+
+# React Native
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+android/app/build/
+ios/Pods/
+ios/build/
+
+# Docker
+docker-compose.override.yml
+*.log

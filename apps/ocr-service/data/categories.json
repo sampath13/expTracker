@@ -1,0 +1,12 @@
+{
+    "Dairy": ["MILK", "YOGURT", "CHEESE", "BUTTER", "CREAM", "YGT", "CHZ", "MLK"],
+    "Produce": ["FRESH", "ORGANIC", "LETTUCE", "TOMATO", "BANANA", "APPLE", "VEG"],
+    "Beverages": ["DRINK", "JUICE", "COFFEE", "TEA", "WATER", "SODA", "COLA", "SPRITE"],
+    "Snacks": ["CHIPS", "CRACKER", "BISCUIT", "NUT", "CHOCOLATE", "CANDY"],
+    "Staples": ["RICE", "FLOUR", "SUGAR", "OIL", "SALT", "SAUCE", "SPICE", "NOODLE"],
+    "Meat/Seafood": ["CHICKEN", "BEEF", "PORK", "FISH", "PRAWN", "SALMON", "MEAT"],
+    "Bakery": ["BREAD", "BUN", "CAKE", "PASTRY", "TOAST", "LOAF"],
+    "Household": ["TISSUE", "SOAP", "DETERGENT", "CLEAN", "SHAMPOO", "TOOTHPASTE"],
+    "Frozen": ["FROZEN", "ICE CREAM", "FROZ VEG", "FROZ MEAT"],
+    "Baby": ["DIAPER", "FORMULA", "BABY WIPE", "BABY FOOD"]
+}

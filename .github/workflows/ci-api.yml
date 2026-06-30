@@ -1,0 +1,34 @@
+name: CI - API
+
+on:
+  push:
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/ci-api.yml'
+  pull_request:
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/ci-api.yml'
+
+defaults:
+  run:
+    working-directory: apps/api
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - run: dotnet restore ExpTracker.slnx
+
+      - run: dotnet build ExpTracker.slnx --no-restore -c Release
+
+      - run: dotnet test ExpTracker.slnx --no-build -c Release --verbosity normal
+
+      - run: dotnet format ExpTracker.slnx --verify-no-changes --no-restore
+        continue-on-error: true

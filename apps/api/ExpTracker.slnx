@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ExpTracker.Api/ExpTracker.Api.csproj" />
+    <Project Path="src/ExpTracker.Core/ExpTracker.Core.csproj" />
+    <Project Path="src/ExpTracker.Infrastructure/ExpTracker.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ExpTracker.Api.Tests/ExpTracker.Api.Tests.csproj" />
+    <Project Path="tests/ExpTracker.Core.Tests/ExpTracker.Core.Tests.csproj" />
+    <Project Path="tests/ExpTracker.Infrastructure.Tests/ExpTracker.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

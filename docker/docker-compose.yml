@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: exptracker
+      POSTGRES_PASSWORD: exptracker_dev
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U exptracker"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
+
+  ocr:
+    build:
+      context: ../apps/ocr-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - paddleocr_cache:/root/.paddleocr
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      retries: 3
+      start_period: 30s
+
+  s3ninja:
+    image: adobe/s3mock:latest
+    ports:
+      - "9444:9090"
+      - "9191:9191"
+    environment:
+      initialBuckets: exptracker-temp-images
+    volumes:
+      - s3data:/data
+
+  api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__PersonalBills: Host=postgres;Database=personal_bills_db;Username=exptracker;Password=exptracker_dev
+      ConnectionStrings__ComparisonPool: Host=postgres;Database=comparison_pool_db;Username=exptracker;Password=exptracker_dev
+      S3__ServiceURL: http://s3ninja:9444
+      S3__AccessKey: AKIAIOSFODNN7EXAMPLE
+      S3__SecretKey: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      S3__BucketName: exptracker-temp-images
+      OcrService__BaseUrl: http://ocr:8000
+      JWT__Key: dev-jwt-signing-key-change-in-prod
+      JWT__Issuer: exptracker-api
+      JWT__Audience: exptracker-mobile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      s3ninja:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      retries: 3
+
+volumes:
+  pgdata:
+  s3data:
+  paddleocr_cache:
