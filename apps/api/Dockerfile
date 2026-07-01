@@ -1,14 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY apps/api/ExpTracker.slnx ./
-COPY apps/api/src/ExpTracker.Api/ExpTracker.Api.csproj src/ExpTracker.Api/
-COPY apps/api/src/ExpTracker.Core/ExpTracker.Core.csproj src/ExpTracker.Core/
-COPY apps/api/src/ExpTracker.Infrastructure/ExpTracker.Infrastructure.csproj src/ExpTracker.Infrastructure/
-
-RUN dotnet restore ExpTracker.slnx
-
 COPY apps/api/ ./
+RUN dotnet restore ExpTracker.slnx
 WORKDIR /src/src/ExpTracker.Api
 RUN dotnet publish -c Release -o /app/publish --no-restore
 

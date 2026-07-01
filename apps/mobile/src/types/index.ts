@@ -31,8 +31,17 @@ export interface AuthResponse {
     email: string;
     mobile: string | null;
     tier: 'free' | 'premium' | 'founder';
-    googleLinked: boolean;
+    communityContribution: boolean;
   };
+  requiresMobile?: boolean;
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  mobile: string | null;
+  tier: 'free' | 'premium' | 'founder';
+  communityContribution: boolean;
 }
 
 export interface UploadUrlResponse {

@@ -31,3 +31,8 @@ export type RootTabParamList = {
   CompareTab: undefined;
   SettingsTab: undefined;
 };
+
+export type RootStackParamList = {
+  Auth: undefined;
+  App: undefined;
+};

@@ -17,6 +17,9 @@ end
 target 'ExpTracker' do
   config = use_native_modules!
 
+  # NPM-vendored @nozbe/simdjson must be used, not the CocoaPods version
+  pod 'simdjson', :path => '../node_modules/@nozbe/simdjson'
+
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.

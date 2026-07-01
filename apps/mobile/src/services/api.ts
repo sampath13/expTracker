@@ -22,7 +22,7 @@ class ApiClient {
     };
 
     if (authenticated) {
-      const token = useAuthStore.getState().tokens.accessToken;
+      const token = useAuthStore.getState().accessToken;
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
@@ -38,7 +38,7 @@ class ApiClient {
 
     this.refreshPromise = (async () => {
       try {
-        const refreshToken = useAuthStore.getState().tokens.refreshToken;
+        const refreshToken = useAuthStore.getState().refreshToken;
         if (!refreshToken) {
           return false;
         }

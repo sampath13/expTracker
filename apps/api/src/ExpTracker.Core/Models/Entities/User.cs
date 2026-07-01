@@ -12,6 +12,8 @@ public class User : IdentityUser<Guid>
 
     public bool CommunityContribution { get; set; } = true;
 
+    public bool MarketingOptIn { get; set; }
+
     public int ScansThisMonth { get; set; }
 
     public DateTime? LastResetAt { get; set; }

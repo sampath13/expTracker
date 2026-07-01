@@ -1,3 +1,5 @@
+using System.Net;
+using Amazon.S3;
 using ExpTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +31,23 @@ public static class DatabaseExtensions
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Failed to apply database migrations or seed data");
+        }
+
+        try
+        {
+            var s3Client = scope.ServiceProvider.GetRequiredService<Amazon.S3.IAmazonS3>();
+            var config = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>();
+            var bucketName = config["S3:BucketName"] ?? "receipt-images";
+            var response = s3Client.ListBucketsAsync().GetAwaiter().GetResult();
+            if (!response.Buckets.Any(b => b.BucketName == bucketName))
+            {
+                s3Client.PutBucketAsync(bucketName).GetAwaiter().GetResult();
+                logger.LogInformation("Created S3 bucket: {Bucket}", bucketName);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to verify S3 bucket");
         }
 
         return app;
